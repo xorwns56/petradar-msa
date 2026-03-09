@@ -3,12 +3,21 @@ spring:
     name: user-service
   profiles:
     active: local
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+# JWT 만료시간은 환경 무관하게 동일
+jwt:
+  access-expiration: 600000     # Access Token 만료시간 10분 (ms)
+  refresh-expiration: 86400000  # Refresh Token 만료시간 24시간 (ms)
 
 management:
   endpoints:
     web:
       exposure:
-        include: health, info, prometheus  # prometheus 엔드포인트 노출
+        include: health, info, prometheus
   endpoint:
     prometheus:
-      enabled: true  # /actuator/prometheus 활성화
+      enabled: true
