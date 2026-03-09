@@ -1,21 +1,32 @@
-server:
-  port: 8080
-
 spring:
   datasource:
-    url: jdbc:mysql://mysql:3306/mydb
-    username: root
+    url: jdbc:postgresql://postgres:5432/report_db
+    username: postgres
     password: ${SPRING_DATASOURCE_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  data:
+    redis:
+      host: redis
+  kafka:
+    bootstrap-servers: kafka:9092
+
+# FeignClient 대상 서비스 주소
+client:
+  user-service:
+    url: http://user-service
+  search-service:
+    url: http://search-service
 
 management:
   tracing:
     sampling:
-      probability: 1.0
+      probability: 0.1  # 프로덕션에서는 10%만 추적
   zipkin:
     tracing:
       endpoint: http://zipkin:9411/api/v2/spans

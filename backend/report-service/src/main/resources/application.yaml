@@ -3,6 +3,14 @@ spring:
     name: report-service
   profiles:
     active: local
+  kafka:
+    consumer:
+      group-id: report-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.xorwns56.report.kafka"
 
 management:
   endpoints:

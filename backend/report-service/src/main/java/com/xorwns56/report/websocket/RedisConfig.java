@@ -1,0 +1,39 @@
+package com.xorwns56.report.websocket;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xorwns56.report.notification.NotificationDTO;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.listener.PatternTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
+
+@Configuration
+@RequiredArgsConstructor
+public class RedisConfig {
+
+    private final RedisSubscriber redisSubscriber;
+
+    // Redis Pub/Sub 채널명 - 알림 브로드캐스트용
+    public static final String NOTIFICATION_CHANNEL = "notification";
+
+    // Redis 메시지 리스너 컨테이너 - 구독 채널 관리
+    @Bean
+    public RedisMessageListenerContainer redisMessageListenerContainer(
+            RedisConnectionFactory connectionFactory,
+            MessageListenerAdapter listenerAdapter) {
+        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory);
+        // notification 채널 구독
+        container.addMessageListener(listenerAdapter, new PatternTopic(NOTIFICATION_CHANNEL));
+        return container;
+    }
+
+    // RedisSubscriber의 onMessage 메서드를 리스너로 등록
+    @Bean
+    public MessageListenerAdapter listenerAdapter(RedisSubscriber redisSubscriber) {
+        return new MessageListenerAdapter(redisSubscriber, "onMessage");
+    }
+}
