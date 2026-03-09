@@ -39,10 +39,10 @@ jobs:
             context: ./backend/gateway-service
           - name: user-service
             context: ./backend/user-service
-          - name: product-service
-            context: ./backend/product-service
-          - name: fitting-service
-            context: ./backend/fitting-service
+          - name: report-service
+            context: ./backend/report-service
+          - name: search-service
+            context: ./backend/search-service
           - name: frontend
             context: ./frontend
 

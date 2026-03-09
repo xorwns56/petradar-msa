@@ -4,7 +4,7 @@ metadata:
   name: frontend
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "ai-fitting-mall.labels" . | nindent 4 }}
+    {{- include "petradar.labels" . | nindent 4 }}
     app: frontend
 spec:
   replicas: {{ .Values.frontend.replicas }}
@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: {{ include "ai-fitting-mall.image" (list . "frontend") }}
+          image: {{ include "petradar.image" (list . "frontend") }}
           imagePullPolicy: {{ .Values.global.imagePullPolicy }}
           ports:
             - containerPort: {{ .Values.frontend.port }}

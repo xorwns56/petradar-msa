@@ -37,19 +37,10 @@ scrape_configs:
       - targets: ['host.docker.internal:8081']
 
   # -----------------------------------------
-  # Product Service (8082)
-  # 상품 조회/관리 관련 메트릭
+  # Report Service (8082)
+  # 실종/발견 신고 관련 메트릭
   # -----------------------------------------
-  - job_name: 'product-service'
+  - job_name: 'report-service'
     metrics_path: '/actuator/prometheus'
     static_configs:
       - targets: ['host.docker.internal:8082']
-
-  # -----------------------------------------
-  # Fitting Service (8083)
-  # AI 피팅 처리 관련 메트릭 (처리 시간 등 중요)
-  # -----------------------------------------
-  - job_name: 'fitting-service'
-    metrics_path: '/actuator/prometheus'
-    static_configs:
-      - targets: ['host.docker.internal:8083']

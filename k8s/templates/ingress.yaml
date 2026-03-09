@@ -2,10 +2,10 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ai-fitting-mall
+  name: petradar
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "ai-fitting-mall.labels" . | nindent 4 }}
+    {{- include "petradar.labels" . | nindent 4 }}
   annotations:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"

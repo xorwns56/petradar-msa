@@ -1,2 +1,2 @@
-# ai-fitting-mall
-MSA 기반 AI 가상 피팅 쇼핑몰 (Spring Boot + Next.js)
+# petradar-msa
+MSA 기반 위치기반 반려동물 실종신고 서비스 (Spring Boot + FastAPI + React)

@@ -1,12 +1,12 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: ai-fitting-mall
+  name: petradar
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://github.com/xorwns56/ai-fitting-mall.git
+    repoURL: https://github.com/xorwns56/petradar.git
     targetRevision: main
     path: k8s
     helm:
@@ -14,7 +14,7 @@ spec:
         - values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: ai-fitting-mall
+    namespace: petradar
   syncPolicy:
     automated:
       prune: true

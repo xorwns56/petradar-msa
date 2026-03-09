@@ -14,17 +14,17 @@ spring:
           filters:
             - StripPrefix=1
 
-        - id: product-service
+        - id: report-service
           uri: http://localhost:8082
           predicates:
-            - Path=/api/products/**
+            - Path=/api/reports/**
           filters:
             - StripPrefix=1
 
-        - id: fitting-service
-          uri: http://localhost:8083
+        - id: search-service
+          uri: http://localhost:8000
           predicates:
-            - Path=/api/fittings/**
+            - Path=/api/search/**
           filters:
             - StripPrefix=1
 

@@ -8,16 +8,16 @@ spring:
             - Path=/api/users/**
           filters:
             - StripPrefix=1
-        - id: product-service
-          uri: http://product-service:8080
+        - id: report-service
+          uri: http://report-service:8080
           predicates:
-            - Path=/api/products/**
+            - Path=/api/reports/**
           filters:
             - StripPrefix=1
-        - id: fitting-service
-          uri: http://fitting-service:8080
+        - id: search-service
+          uri: http://search-service:8000
           predicates:
-            - Path=/api/fittings/**
+            - Path=/api/search/**
           filters:
             - StripPrefix=1
 

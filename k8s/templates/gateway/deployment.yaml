@@ -4,7 +4,7 @@ metadata:
   name: gateway-service
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "ai-fitting-mall.labels" . | nindent 4 }}
+    {{- include "petradar.labels" . | nindent 4 }}
     app: gateway-service
 spec:
   replicas: {{ .Values.gateway.replicas }}
@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: gateway-service
-          image: {{ include "ai-fitting-mall.image" (list . "gateway-service") }}
+          image: {{ include "petradar.image" (list . "gateway-service") }}
           imagePullPolicy: {{ .Values.global.imagePullPolicy }}
           ports:
             - containerPort: {{ .Values.gateway.port }}

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: search-service
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "petradar.labels" . | nindent 4 }}
+    app: search-service
+spec:
+  replicas: {{ .Values.searchService.replicas }}
+  selector:
+    matchLabels:
+      app: search-service
+  template:
+    metadata:
+      labels:
+        app: search-service
+    spec:
+      containers:
+        - name: search-service
+          image: {{ include "petradar.image" (list . "search-service") }}
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          ports:
+            - containerPort: {{ .Values.searchService.port }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.searchService.port }}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.searchService.port }}
+            initialDelaySeconds: 60
+            periodSeconds: 30

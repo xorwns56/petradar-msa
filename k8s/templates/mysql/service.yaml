@@ -4,7 +4,7 @@ metadata:
   name: mysql
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "ai-fitting-mall.labels" . | nindent 4 }}
+    {{- include "petradar.labels" . | nindent 4 }}
     app: mysql
 spec:
   selector:

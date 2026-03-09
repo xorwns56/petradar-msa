@@ -1,27 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-service
+  name: report-service
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "petradar.labels" . | nindent 4 }}
-    app: user-service
+    app: report-service
 spec:
-  replicas: {{ .Values.userService.replicas }}
+  replicas: {{ .Values.reportService.replicas }}
   selector:
     matchLabels:
-      app: user-service
+      app: report-service
   template:
     metadata:
       labels:
-        app: user-service
+        app: report-service
     spec:
       containers:
-        - name: user-service
-          image: {{ include "petradar.image" (list . "user-service") }}
+        - name: report-service
+          image: {{ include "petradar.image" (list . "report-service") }}
           imagePullPolicy: {{ .Values.global.imagePullPolicy }}
           ports:
-            - containerPort: {{ .Values.userService.port }}
+            - containerPort: {{ .Values.reportService.port }}
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "k8s"
@@ -33,12 +33,12 @@ spec:
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
-              port: {{ .Values.userService.port }}
+              port: {{ .Values.reportService.port }}
             initialDelaySeconds: 60
             periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
-              port: {{ .Values.userService.port }}
+              port: {{ .Values.reportService.port }}
             initialDelaySeconds: 90
             periodSeconds: 30

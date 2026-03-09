@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: report-service
+  profiles:
+    active: local
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus  # prometheus 엔드포인트 노출
+  endpoint:
+    prometheus:
+      enabled: true  # /actuator/prometheus 활성화

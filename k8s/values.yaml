@@ -1,13 +1,13 @@
 # =============================================================================
-# AI Fitting Mall - Helm Chart Values
+# PetRadar - Helm Chart Values
 # 모든 설정값은 이 파일에서 관리합니다.
-# 배포 시: helm install ai-fitting-mall ./k8s -n ai-fitting-mall --create-namespace
+# 배포 시: helm install petradar ./k8s -n petradar --create-namespace
 # =============================================================================
 
 # 글로벌 이미지 설정
 global:
   imageRegistry: ghcr.io
-  imageRepository: xorwns56/ai-fitting-mall  # GitHub 사용자명/저장소명
+  imageRepository: xorwns56/petradar-msa  # GitHub 사용자명/저장소명
   imageTag: latest
   imagePullPolicy: Always
   # GHCR이 private일 경우 imagePullSecret 설정
@@ -41,13 +41,13 @@ userService:
   replicas: 1
   port: 8080
 
-productService:
+reportService:
   replicas: 1
   port: 8080
 
-fittingService:
+searchService:
   replicas: 1
-  port: 8080
+  port: 8000
 
 frontend:
   replicas: 1

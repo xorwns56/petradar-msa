@@ -4,7 +4,7 @@ metadata:
   name: frontend
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "ai-fitting-mall.labels" . | nindent 4 }}
+    {{- include "petradar.labels" . | nindent 4 }}
     app: frontend
 spec:
   selector:

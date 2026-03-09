@@ -1,6 +1,5 @@
-rootProject.name = 'ai-fitting-mall'
+rootProject.name = 'petradar-msa'
 
 include 'backend:gateway-service'
-include 'backend:fitting-service'
-include 'backend:product-service'
 include 'backend:user-service'
+include 'backend:report-service'
