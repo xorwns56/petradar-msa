@@ -1,7 +1,9 @@
 fastapi==0.115.0
-uvicorn[standard]==0.30.6
-langchain==0.3.0
-langchain-community==0.3.0
-langchain-openai==0.2.0
-chromadb==0.5.0
-python-dotenv==1.0.1
+uvicorn[standard]==0.30.6   # FastAPI 실행 서버 (Spring의 내장 Tomcat과 같은 역할)
+psycopg2-binary==2.9.9      # PostgreSQL 드라이버 (Spring의 JDBC 드라이버)
+sqlalchemy==2.0.36          # Python ORM (Spring의 JPA)
+pgvector==0.3.2             # pgvector SQLAlchemy 연동
+transformers==4.46.0        # HuggingFace 모델 라이브러리 (CLIP 포함)
+torch==2.5.1                # CLIP 모델 실행에 필요한 딥러닝 프레임워크
+Pillow==11.0.0              # 이미지 처리 라이브러리
+python-dotenv==1.0.1        # .env 파일로 환경변수 관리
