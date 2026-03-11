@@ -25,7 +25,7 @@ env:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    timeout-minutes: 30  # 멀티 아키텍처 빌드(QEMU arm64 에뮬레이션)로 인해 15→30분으로 증가
+    timeout-minutes: 60  # search-service CLIP 모델 다운로드(~600MB) 포함으로 60분으로 증가
 
     permissions:
       contents: read
