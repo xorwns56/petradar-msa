@@ -1,11 +1,8 @@
 spring:
   application:
-    name: gateway-service # 모든 환경(로컬, dev, prod 등)에서 공유되는 앱 이름
+    name: gateway-service
   profiles:
-    active: local # 기본적으로 local 프로파일을 활성화
-
-server:
-  port: 8080
+    active: local
 
 management:
   endpoints:

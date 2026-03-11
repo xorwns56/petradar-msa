@@ -1,5 +1,5 @@
 # ===========================================
-# 로컬 개발환경 설정 (Docker Compose 환경)
+# 로컬 개발환경 설정
 # 추후 k8s 배포 시 application-k8s.yaml에서 오버라이드
 # ===========================================
 
@@ -7,26 +7,27 @@ spring:
   cloud:
     gateway:
       routes:
+        # user-service: 인증 + 사용자 관리
         - id: user-service
           uri: http://localhost:8081
           predicates:
-            - Path=/api/users/**
-          filters:
-            - StripPrefix=1
+            - Path=/api/auth/**, /api/user/**
 
+        # report-service: 실종신고 + 목격제보 + 알림
         - id: report-service
           uri: http://localhost:8082
           predicates:
-            - Path=/api/reports/**
-          filters:
-            - StripPrefix=1
+            - Path=/api/missing/**, /api/report/**, /api/notification/**
 
+        # search-service: 이미지/텍스트 유사도 검색
         - id: search-service
           uri: http://localhost:8000
           predicates:
             - Path=/api/search/**
-          filters:
-            - StripPrefix=1
+
+# JWT 설정 (user-service와 동일한 시크릿 키 사용)
+jwt:
+  secret: petradar-secret-key-must-be-at-least-256-bits-long-for-hs256
 
 # -----------------------------------------
 # Zipkin 분산 추적 설정 (로컬)
