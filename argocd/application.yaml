@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/xorwns56/petradar.git
+    repoURL: https://github.com/xorwns56/petradar-msa.git
     targetRevision: main
     path: k8s
     helm:
