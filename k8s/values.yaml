@@ -32,6 +32,14 @@ kafka:
   image: confluentinc/cp-kafka:7.6.0
   port: 9092
 
+minio:
+  image: minio/minio:latest
+  port: 9000
+  storage: 2Gi
+  # 배포 시 직접 주입 (secrets.yaml 사용)
+  accessKey: ""
+  secretKey: ""
+
 zipkin:
   image: openzipkin/zipkin:3
   port: 9411

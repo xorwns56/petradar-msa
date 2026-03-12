@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RedisPublisher {
 
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<Object, Object> redisTemplate;
 
     // Redis notification 채널로 메시지 발행
     // 모든 인스턴스의 RedisSubscriber가 수신하여 해당 유저에게 WebSocket 전송

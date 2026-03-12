@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # ===========================================
   # PostgreSQL - 서비스별 스키마 분리
@@ -25,23 +23,6 @@ services:
       retries: 5
 
   # ===========================================
-  # pgAdmin - PostgreSQL 웹 기반 관리 도구
-  # 접속: http://localhost:5050 (admin@admin.com / admin)
-  # ===========================================
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: pgadmin
-    ports:
-      - "5050:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    depends_on:
-      - postgres                             # PostgreSQL이 먼저 실행된 후 시작
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin        # 대시보드 설정 유지
-
-  # ===========================================
   # Redis - Refresh Token 저장 + WebSocket Pub/Sub
   # Refresh Token: refresh:{userId} (TTL 24h)
   # WebSocket: 스케일 아웃 시 인스턴스 간 메시지 브로드캐스트
@@ -54,6 +35,24 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data                     # 데이터 영속성 보장
+
+  # ===========================================
+  # MinIO - 이미지 파일 스토리지
+  # 접속: http://localhost:9001 (minioadmin / minioadmin)
+  # API: localhost:9000
+  # ===========================================
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"   # API 포트
+      - "9001:9001"   # 웹 콘솔 포트
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio-data:/data
 
   # ===========================================
   # Kafka - KRaft 모드 (Zookeeper 없이 실행)
@@ -80,60 +79,12 @@ services:
     volumes:
       - kafka-data:/var/lib/kafka/data
 
-  # ===========================================
-  # Prometheus - 메트릭 수집 서버
-  # 접속: http://localhost:9090
-  # Spring Boot Actuator에서 노출한 메트릭을 주기적으로 수집
-  # ===========================================
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    ports:
-      - "9090:9090"                          # Prometheus 웹 UI 포트
-    volumes:
-      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml  # 수집 대상 설정 파일 마운트
-      - prometheus-data:/prometheus                                         # 수집한 메트릭 데이터 저장소
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'  # 설정 파일 경로 지정
-      - '--storage.tsdb.path=/prometheus'               # 시계열 데이터 저장 경로
-
-  # ===========================================
-  # Grafana - 메트릭 시각화 대시보드
-  # 접속: http://localhost:3001 (admin/admin)
-  # Prometheus 데이터를 그래프/차트로 시각화
-  # ===========================================
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    ports:
-      - "3001:3000"                          # Grafana 기본 3000 → 3001로 변경
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin         # 관리자 계정
-      - GF_SECURITY_ADMIN_PASSWORD=admin     # 관리자 비밀번호 (개발용)
-    volumes:
-      - grafana-data:/var/lib/grafana        # 대시보드 설정, 데이터소스 설정 유지
-    depends_on:
-      - prometheus                           # Prometheus가 먼저 실행되어야 데이터소스 연결 가능
-
-  # ===========================================
-  # Zipkin - 분산 추적 시스템
-  # 접속: http://localhost:9411
-  # MSA 환경에서 서비스 간 API 호출 흐름 및 지연시간 분석
-  # ===========================================
-  zipkin:
-    image: openzipkin/zipkin:latest
-    container_name: zipkin
-    ports:
-      - "9411:9411"                          # Zipkin 웹 UI 및 API 포트
-
 # ===========================================
 # Named Volumes - 컨테이너 삭제해도 데이터 보존
 # docker volume ls 로 확인 가능
 # ===========================================
 volumes:
   postgres-data:    # PostgreSQL 데이터 저장
-  pgadmin-data:     # pgAdmin 설정 저장
   redis-data:       # Redis 데이터 저장
   kafka-data:       # Kafka 데이터 저장
-  prometheus-data:  # Prometheus 메트릭 데이터 저장
-  grafana-data:     # Grafana 대시보드/설정 저장
+  minio-data:       # MinIO 이미지 저장

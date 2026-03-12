@@ -1,9 +1,13 @@
 package com.xorwns56.report.missing;
 
-import com.xorwns56.report.client.SearchServiceClient;
+import com.xorwns56.report.kafka.MissingCreatedEvent;
+import com.xorwns56.report.kafka.MissingDeletedEvent;
+import com.xorwns56.report.minio.MinioService;
 import com.xorwns56.report.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,13 +15,18 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MissingService {
 
     private final MissingRepository missingRepository;
     private final NotificationService notificationService;
-    private final SearchServiceClient searchServiceClient;
+    private final MinioService minioService;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+
+    private static final String KAFKA_TOPIC_MISSING_CREATED = "missing-created";
+    private static final String KAFKA_TOPIC_MISSING_DELETED = "missing-deleted";
 
     // 실종 신고 목록 조회 (검색 + 정렬)
     @Transactional(readOnly = true)
@@ -49,6 +58,13 @@ public class MissingService {
     // 실종 신고 등록
     @Transactional
     public void create(Long userId, MissingDTO.Request request, MultipartFile image) {
+        // 1. 이미지 MinIO 업로드
+        String imageUrl = null;
+        if (image != null && !image.isEmpty()) {
+            imageUrl = minioService.upload(image);
+        }
+
+        // 2. DB 저장
         MissingDTO.Point point = request.getPetMissingPoint();
         Missing missing = Missing.builder()
                 .userId(userId)
@@ -63,15 +79,19 @@ public class MissingService {
                 .longitude(point != null ? point.getLng() : null)
                 .title(request.getTitle())
                 .content(request.getContent())
+                .petImage(imageUrl)
                 .build();
         missingRepository.save(missing);
 
-        // search-service에 이미지 임베딩 저장 (CLIP 벡터화)
-        if (image != null && !image.isEmpty()) {
-            searchServiceClient.indexMissing(missing.getId(), image);
+        // 3. Kafka로 missing-created 이벤트 발행
+        // search-service가 소비해서 CLIP 벡터화 후 pgvector 저장
+        // search-service가 꺼져있어도 Kafka가 메시지 보관 → 재시작 시 처리
+        if (imageUrl != null) {
+            kafkaTemplate.send(KAFKA_TOPIC_MISSING_CREATED,
+                    new MissingCreatedEvent(missing.getId(), imageUrl));
         }
 
-        // 전체 유저에게 알림 발송 (비동기)
+        // 4. 전체 유저에게 알림 발송 (비동기)
         notificationService.sendToAllUsers(userId, "missing", missing.getId());
     }
 
@@ -105,9 +125,15 @@ public class MissingService {
         if (!missing.getUserId().equals(userId)) {
             throw new IllegalArgumentException("삭제 권한이 없습니다.");
         }
+
+        // MinIO 이미지 삭제
+        if (missing.getPetImage() != null) {
+            minioService.delete(missing.getPetImage());
+        }
+
         missingRepository.delete(missing);
 
-        // search-service에서 임베딩 제거
-        searchServiceClient.deleteIndex(id);
+        // search-service에서 pgvector 임베딩 삭제
+        kafkaTemplate.send(KAFKA_TOPIC_MISSING_DELETED, new MissingDeletedEvent(id));
     }
 }

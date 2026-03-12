@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '4.0.2'
+	id 'org.springframework.boot' version '3.4.1'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -27,13 +27,13 @@ repositories {
 // Spring Cloud 버전 관리
 dependencyManagement {
 	imports {
-		mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2025.0.0'
+		mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2024.0.0'
 	}
 }
 
 dependencies {
 	// Web
-	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
 
 	// WebSocket (STOMP)
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
@@ -62,6 +62,9 @@ dependencies {
 	implementation 'io.micrometer:micrometer-tracing-bridge-brave'  // 분산 추적 브릿지
 	implementation 'io.zipkin.reporter2:zipkin-reporter-brave'      // Zipkin으로 트레이스 전송
 
+	// MinIO - 이미지 파일 스토리지
+	implementation 'io.minio:minio:8.5.12'
+
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -73,4 +76,9 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+// 로컬 개발 시 JVM 메모리 제한
+tasks.named('bootRun') {
+	jvmArgs = ['-Xmx256m']
 }
