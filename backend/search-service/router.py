@@ -80,13 +80,22 @@ def search_by_text(request: TextSearchRequest, db: Session = Depends(get_db)):
 def _search(vector: list[float], top_k: int, db: Session) -> SearchResponse:
     """
     pgvector 코사인 유사도 검색
-    <=> 연산자: pgvector의 코사인 거리 연산자 (거리이므로 낮을수록 유사)
+    image_vector와 text_vector 모두 비교 후 더 유사한 값을 similarity로 사용
+    이미지/텍스트 어느 쪽으로 검색해도 두 벡터를 모두 활용해 더 좋은 결과 반환
     """
     results = db.execute(
         text("""
-            SELECT missing_id, 1 - (image_vector <=> CAST(:vector AS vector)) AS similarity
+            SELECT missing_id,
+                   GREATEST(
+                       CASE WHEN image_vector IS NOT NULL
+                            THEN 1 - (image_vector <=> CAST(:vector AS vector))
+                            ELSE 0 END,
+                       CASE WHEN text_vector IS NOT NULL
+                            THEN 1 - (text_vector <=> CAST(:vector AS vector))
+                            ELSE 0 END
+                   ) AS similarity
             FROM missing_embedding
-            ORDER BY image_vector <=> CAST(:vector AS vector)
+            ORDER BY similarity DESC
             LIMIT :top_k
         """),
         {"vector": str(vector), "top_k": top_k}

@@ -3,7 +3,6 @@ package com.xorwns56.report.notification;
 import com.xorwns56.report.client.UserServiceClient;
 import com.xorwns56.report.websocket.RedisPublisher;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,9 +37,9 @@ public class NotificationService {
                 .build());
     }
 
-    // 전체 유저에게 알림 전송 (실종 신고 등록 시) - 비동기 처리
-    @Async
-    @Transactional
+    // 전체 유저에게 알림 전송 (Kafka consumer에서 호출)
+    // Kafka consumer 스레드에서 실행되므로 @Async 불필요
+    // 트랜잭션은 내부에서 호출하는 sendToUser()에서 각각 처리
     public void sendToAllUsers(Long senderId, String postType, Long postId) {
         // user-service에서 전체 유저 목록 조회
         List<UserServiceClient.UserResponse> allUsers = userServiceClient.getAllUsers();

@@ -3,7 +3,6 @@ package com.xorwns56.report.missing;
 import com.xorwns56.report.kafka.MissingCreatedEvent;
 import com.xorwns56.report.kafka.MissingDeletedEvent;
 import com.xorwns56.report.minio.MinioService;
-import com.xorwns56.report.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
@@ -21,7 +20,6 @@ import java.util.stream.Collectors;
 public class MissingService {
 
     private final MissingRepository missingRepository;
-    private final NotificationService notificationService;
     private final MinioService minioService;
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
@@ -84,15 +82,23 @@ public class MissingService {
         missingRepository.save(missing);
 
         // 3. Kafka로 missing-created 이벤트 발행
-        // search-service가 소비해서 CLIP 벡터화 후 pgvector 저장
-        // search-service가 꺼져있어도 Kafka가 메시지 보관 → 재시작 시 처리
-        if (imageUrl != null) {
-            kafkaTemplate.send(KAFKA_TOPIC_MISSING_CREATED,
-                    new MissingCreatedEvent(missing.getId(), imageUrl));
-        }
-
-        // 4. 전체 유저에게 알림 발송 (비동기)
-        notificationService.sendToAllUsers(userId, "missing", missing.getId());
+        // search-service: CLIP 벡터화 후 pgvector 저장
+        // report-service(MissingCreatedConsumer): 전체 유저 알림 발송
+        // Kafka가 메시지 보관 → 각 consumer 장애 시에도 eventually 처리 보장
+        kafkaTemplate.send(KAFKA_TOPIC_MISSING_CREATED,
+                new MissingCreatedEvent(
+                        missing.getId(),
+                        userId,
+                        imageUrl,
+                        missing.getPetName(),
+                        missing.getPetType(),
+                        missing.getPetGender(),
+                        missing.getPetBreed(),
+                        missing.getPetAge(),
+                        missing.getPetMissingPlace(),
+                        missing.getTitle(),
+                        missing.getContent()
+                ));
     }
 
     // 실종 신고 수정

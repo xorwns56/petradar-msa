@@ -60,7 +60,7 @@ public class Missing {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @Lob
+    // MinIO URL 저장 - 일반 VARCHAR로 충분
     private String petImage;
 
     // 같은 서비스 내부이므로 JPA 연관관계 사용 가능

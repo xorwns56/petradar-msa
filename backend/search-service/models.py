@@ -10,6 +10,9 @@ class MissingEmbedding(Base):
     # Spring의 @Id @GeneratedValue와 달리, missing_id는 report-service의 missing.id를 그대로 사용
     missing_id = Column(BigInteger, primary_key=True)
 
-    # CLIP(clip-vit-base-patch32) 벡터 차원: 512
-    # 이미지와 텍스트 모두 이 컬럼 하나로 검색 가능 (크로스 모달)
-    image_vector = Column(Vector(512), nullable=False)
+    # 반려동물 사진으로 생성한 벡터 (이미지 없으면 null)
+    image_vector = Column(Vector(512), nullable=True)
+
+    # 반려동물 설명 텍스트로 생성한 벡터 (항상 존재)
+    # 텍스트 검색 + 이미지 검색 모두에 활용 가능 (CLIP 크로스 모달)
+    text_vector = Column(Vector(512), nullable=True)

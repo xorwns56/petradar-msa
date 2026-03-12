@@ -36,7 +36,7 @@ public class Report {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Lob
+    // MinIO URL 저장 - 일반 VARCHAR로 충분
     private String petImage;
 
     @Column(name = "pet_report_place")
