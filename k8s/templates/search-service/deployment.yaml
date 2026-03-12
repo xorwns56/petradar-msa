@@ -22,15 +22,25 @@ spec:
           imagePullPolicy: {{ .Values.global.imagePullPolicy }}
           ports:
             - containerPort: {{ .Values.searchService.port }}
+          env:
+            # k8s 내부에서 postgres 서비스 이름으로 접근
+            # $(POSTGRES_PASSWORD) 문법으로 같은 env 블록의 값 참조
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: postgres-password
+            - name: DATABASE_URL
+              value: "postgresql://postgres:$(POSTGRES_PASSWORD)@postgres:5432/search_db"
           readinessProbe:
             httpGet:
               path: /health
               port: {{ .Values.searchService.port }}
-            initialDelaySeconds: 30
+            initialDelaySeconds: 60  # CLIP 모델 캐시 로딩 시간 고려
             periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /health
               port: {{ .Values.searchService.port }}
-            initialDelaySeconds: 60
+            initialDelaySeconds: 90
             periodSeconds: 30

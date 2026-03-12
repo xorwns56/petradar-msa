@@ -30,6 +30,12 @@ spec:
                 secretKeyRef:
                   name: db-secret
                   key: spring-datasource-password
+            # JWT 시크릿 - user-service가 토큰 발급 담당
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: jwt-secret
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness

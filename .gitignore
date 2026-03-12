@@ -15,5 +15,8 @@ Thumbs.db
 # 로그
 *.log
 
+# k8s 시크릿 (실제 값이 담긴 파일은 git에 올리지 않음)
+k8s/secrets.yaml
+
 # Claude
 CLAUDE.md

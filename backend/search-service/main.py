@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
+from prometheus_fastapi_instrumentator import Instrumentator
 from database import init_db
 from router import router
 
@@ -18,6 +19,9 @@ app = FastAPI(
 
 # 라우터 등록 (Spring의 @ComponentScan과 유사)
 app.include_router(router)
+
+# Prometheus 메트릭 수집 엔드포인트 등록 (/metrics)
+Instrumentator().instrument(app).expose(app)
 
 @app.get("/health")
 def health():

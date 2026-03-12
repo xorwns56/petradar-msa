@@ -44,3 +44,12 @@ scrape_configs:
     metrics_path: '/actuator/prometheus'
     static_configs:
       - targets: ['host.docker.internal:8082']
+
+  # -----------------------------------------
+  # Search Service (8000)
+  # 이미지/텍스트 유사도 검색 관련 메트릭
+  # -----------------------------------------
+  - job_name: 'search-service'
+    metrics_path: '/metrics'  # FastAPI prometheus-fastapi-instrumentator 엔드포인트
+    static_configs:
+      - targets: ['host.docker.internal:8000']

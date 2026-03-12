@@ -25,6 +25,12 @@ spec:
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "k8s"
+            # JWT 시크릿 - gateway가 토큰 검증 담당
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: jwt-secret
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness

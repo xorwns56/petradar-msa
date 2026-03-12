@@ -17,17 +17,28 @@ global:
 # 인프라 서비스
 # =============================================================================
 
-mysql:
-  image: public.ecr.aws/docker/library/mysql:8.0
-  port: 3306
-  database: mydb
-  username: root
+postgres:
+  image: pgvector/pgvector:pg16  # pgvector 확장 포함 이미지
+  port: 5432
+  username: postgres
   password: "1234"
   storage: 5Gi
+
+redis:
+  image: redis:7-alpine
+  port: 6379
+
+kafka:
+  image: confluentinc/cp-kafka:7.6.0
+  port: 9092
 
 zipkin:
   image: openzipkin/zipkin:3
   port: 9411
+
+# JWT 시크릿 - 배포 시 직접 주입 (git에 올리지 않음)
+# helm install petradar ./k8s --set jwtSecret="실제시크릿값"
+jwtSecret: ""
 
 # =============================================================================
 # 애플리케이션 서비스
