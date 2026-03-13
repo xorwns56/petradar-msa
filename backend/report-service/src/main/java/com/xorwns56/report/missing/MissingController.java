@@ -2,6 +2,9 @@ package com.xorwns56.report.missing;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,12 +19,26 @@ public class MissingController {
 
     private final MissingService missingService;
 
-    // 실종 신고 목록 조회 (검색, 정렬)
+    // 실종 신고 목록 조회 (검색, 정렬, 페이지네이션)
     @GetMapping
-    public ResponseEntity<List<MissingDTO.Response>> getList(
+    public ResponseEntity<Page<MissingDTO.Response>> getList(
             @RequestParam(defaultValue = "") String search,
-            @RequestParam(defaultValue = "latest") String sort) {
-        return ResponseEntity.ok(missingService.getList(search, sort));
+            @RequestParam(defaultValue = "latest") String sort,
+            @PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(missingService.getList(search, sort, pageable));
+    }
+
+    // 실종 신고 전체 목록 조회 (지도 마커 표시용, 페이징 없음)
+    @GetMapping("/all")
+    public ResponseEntity<List<MissingDTO.Response>> getAll() {
+        return ResponseEntity.ok(missingService.getList("", "latest"));
+    }
+
+    // ID 목록으로 실종 신고 조회 (search-service 유사도 검색 결과 연동용)
+    @GetMapping("/batch")
+    public ResponseEntity<List<MissingDTO.Response>> getByIds(
+            @RequestParam List<Long> ids) {
+        return ResponseEntity.ok(missingService.getByIds(ids));
     }
 
     // 내 실종 신고 목록 조회

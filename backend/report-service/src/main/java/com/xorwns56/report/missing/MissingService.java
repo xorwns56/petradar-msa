@@ -5,6 +5,9 @@ import com.xorwns56.report.kafka.MissingDeletedEvent;
 import com.xorwns56.report.minio.MinioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -26,13 +29,36 @@ public class MissingService {
     private static final String KAFKA_TOPIC_MISSING_CREATED = "missing-created";
     private static final String KAFKA_TOPIC_MISSING_DELETED = "missing-deleted";
 
-    // 실종 신고 목록 조회 (검색 + 정렬)
+    // 실종 신고 목록 조회 (검색 + 정렬) — Home 등에서 전체 목록 필요 시 사용
     @Transactional(readOnly = true)
     public List<MissingDTO.Response> getList(String search, String sort) {
         Sort sortBy = "oldest".equals(sort)
                 ? Sort.by("createdAt").ascending()
                 : Sort.by("createdAt").descending();
         return missingRepository.findByTitleContainingIgnoreCase(search, sortBy).stream()
+                .map(MissingDTO.Response::from)
+                .collect(Collectors.toList());
+    }
+
+    // 실종 신고 목록 조회 (검색 + 정렬 + 페이지네이션)
+    @Transactional(readOnly = true)
+    public Page<MissingDTO.Response> getList(String search, String sort, Pageable pageable) {
+        Sort sortBy = "oldest".equals(sort)
+                ? Sort.by("createdAt").ascending()
+                : Sort.by("createdAt").descending();
+        // Pageable의 정렬을 sort 파라미터로 오버라이드
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortBy);
+        return missingRepository.findByTitleContainingIgnoreCase(search, sortedPageable)
+                .map(MissingDTO.Response::from);
+    }
+
+    // ID 목록으로 실종 신고 조회 (search-service 연동용, ID 순서 유지)
+    @Transactional(readOnly = true)
+    public List<MissingDTO.Response> getByIds(List<Long> ids) {
+        // DB 조회 후 요청된 ID 순서대로 정렬 (유사도 순서 보존)
+        List<Missing> results = missingRepository.findByIdIn(ids);
+        return ids.stream()
+                .flatMap(id -> results.stream().filter(m -> m.getId().equals(id)))
                 .map(MissingDTO.Response::from)
                 .collect(Collectors.toList());
     }
