@@ -1,0 +1,77 @@
+.MissingReport {
+  height: 100%;
+}
+
+/* menu-title */
+.MissingReport .menu-title {
+  text-align: center;
+  margin-top: 30px;
+  line-height: 1.5;
+  padding: 10px;
+  font-size: var(--font-title-lg-d);
+}
+
+.MissingReport .MissingReport-container {
+  height: 100%;
+  padding: 0;
+}
+
+.MissingReportForms {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 30px auto;
+  margin-bottom: 0;
+  border-radius: 50px 50px 0 0;
+  border: 2px solid var(--border-color);
+  width: 90%;
+  padding: 40px;
+  background-color: var(--bg-white-color);
+}
+
+.MissingReportForms .MissingReportForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.MissingReportForms .MissingReportForm h4,
+.MissingReportForms .MissingReportForm label {
+  font-size: var(--font-subtitle-lg-d);
+  font-weight: bold;
+}
+
+.MissingReportForms .MissingReportForm input,
+.MissingReportForms .MissingReportForm select {
+  width: 100%;
+  height: 50px;
+  border: 1px solid var(--border-color);
+  font-size: var(--font-small);
+  padding: 10px;
+  border-radius: 5px;
+  outline: none;
+  transition: border 0.3s;
+}
+
+.MissingReportForms .MissingReportForm input:focus,
+.MissingReportForms .MissingReportForm select:focus,
+.MissingReportForms .MissingReportForm textarea:focus {
+  border: 1px solid var(--main-color);
+}
+
+.MissingReportForms .MissingReportForm textarea {
+  height: 120px;
+  border: 1px solid var(--border-color);
+  font-size: var(--font-small);
+  padding: 10px;
+  resize: none;
+  overflow-y: auto;
+  outline: none;
+  transition: border 0.3s;
+  border-radius: 5px;
+}
+
+#locationMap {
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+}

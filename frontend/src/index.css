@@ -1,0 +1,118 @@
+/* Pretendard Regular (400) */
+@font-face {
+  font-family: 'Pretendard';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Pretendard Medium (500) */
+@font-face {
+  font-family: 'Pretendard';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2107@1.1/Pretendard-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+}
+
+/* Pretendard Bold (700) */
+@font-face {
+  font-family: 'Pretendard';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2107@1.1/Pretendard-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* 기본 글꼴 지정 */
+body * {
+  font-family: 'Pretendard-Regular';
+}
+
+/* 기본 구조 초기화 */
+html,
+body {
+  margin: 0;
+  width: 100%;
+  background-color: rgb(246, 246, 246);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+ul,
+li {
+  list-style: none;
+}
+
+/* 루트 컨테이너 */
+#root {
+  position: relative;
+  background-color: var(--bg-color);
+  width: 60%;
+  min-width: 600px;
+  min-height: 100vh;
+  margin: 0 auto;
+  box-shadow: rgba(100, 100, 100, 0.2) 0px 0px 29px 0px;
+  overflow: hidden;
+}
+
+:root {
+  /* color */
+  --main-color: #ffa516;
+  --sub-color: #fff9e9;
+  --border-color: #DDDDDD;
+  --err-color: #ff0101;
+  /* --border-color: #c5ccd2; */ /* 색상 검토 */
+
+  --text-white: #ffffff;
+  --title-color: #222222;
+  --subtitle-color: #6c6c6c;
+  --subtitleL-color:#EDEAE6;
+
+  --bg-color: #fffcf9;
+  --bg-white-color: #ffffff;
+  --bg-rgb-color: rgba(0, 0, 0, 0.5);
+  --bg-new: #fffef5;
+  /* font-size */
+  --font-title-xl-d: 32px;
+  --font-title-lg-d: 22px;
+  --font-subtitle-xl-d: 20px;
+  --font-subtitle-lg-d: 18px;
+
+  --font-body: 18px; /* 일반 본문 */
+  --font-size-base: 16px;
+  --font-small: 14px; /* 보조 텍스트 */
+  --font-caption: 12px; /* 아주 작은 설명 */
+  --font-button: 16px;
+
+  --font-title-xl-m: 28px;
+  --font-title-lg-m: 22px;
+  --font-subtitle-xl-m: 18px;
+  --font-subtitle-lg-m: 16px;
+}
+
+/* 내부 콘텐츠 영역 */
+.inner {
+  max-width: 750px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* 모바일 대응 */
+@media (max-width: 600px) {
+  #root {
+    width: 100%;
+    min-width: unset;
+    min-height: auto;
+    height: auto;
+    box-shadow: none;
+  }
+
+  .inner {
+    padding: 16px;
+  }
+}

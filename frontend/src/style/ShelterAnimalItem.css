@@ -1,0 +1,54 @@
+.ShelterAnimalItem {
+  position: relative;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+}
+
+.ShelterAnimalItem:last-child {
+  border: none;
+}
+
+.ShelterAnimalItem .ShelterAnimalItem-img img {
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+}
+
+.ShelterAnimalItem .contents {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: var(--font-small);
+}
+
+.ShelterAnimalItem .contents .contents-t1 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ShelterAnimalItem .contents .contents-t1 {
+  font-weight: bold;
+  font-size: var(--font-size-base);
+}
+
+.ShelterAnimalItem .contents .contents-t1 .petType {
+  padding: 5px 10px;
+  background-color: var(--main-color);
+  border-radius: 5px;
+  color: var(--text-white);
+}
+
+.ShelterAnimalItem .ReportMove-btn {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+}

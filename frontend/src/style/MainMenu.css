@@ -1,0 +1,72 @@
+.MainMenu {
+  position: relative;
+  width: 32%;
+  min-width: 200px;
+  height: 100%;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-white-color);
+  padding: 30px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: 0.5s;
+}
+
+.MainMenu:hover {
+  background-color: var(--main-color);
+}
+
+.MainMenu:hover h2 {
+  color: var(--text-white);
+}
+
+.MainMenu:hover p {
+  color: var(--text-white);
+}
+
+.MainMenu img {
+  width: 60px;
+  position: absolute;
+  right: 30px;
+  bottom: 20px;
+}
+
+.MainMenu:hover img {
+  filter: invert(100%);
+}
+
+.MainMenu h2 {
+  font-size: var(--font-title-lg-d);
+  color: var(--title-color);
+}
+
+.MainMenu p {
+  font-size: var(--font-subtitle-lg-d);
+  padding-top: 15px;
+  line-height: 1.5;
+  color: var(--subtitle-color);
+}
+
+/* 모바일*/
+@media (max-width: 1110px) {
+  .MainMenu {
+    width: 100%;
+    height: auto;
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  .MainMenu img {
+    width: 50px;
+    right: 20px;
+    bottom: 16px;
+  }
+
+  .MainMenu h2 {
+    font-size: var(--font-title-lg-m);
+  }
+
+  .MainMenu p {
+    font-size: var(--font-subtitle-lg-m);
+    padding-top: 10px;
+  }
+}

@@ -1,0 +1,69 @@
+.MissingList {
+  position: relative;
+  height: 100vh;
+}
+
+.MissingList .MissingList-conatiner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 100%;
+}
+
+/* PageTitle */
+.MissingList .PageTitle {
+  text-align: center;
+  margin-top: 30px;
+  line-height: 1.5;
+  padding: 10px;
+  font-size: var(--font-title-lg-d);
+}
+
+.MissingList .search-box {
+  width: 100%;
+  display: flex;
+  gap: 5px;
+  height: 50px;
+  margin: 10px 0;
+}
+
+/* select */
+.MissingList .search-box select {
+  width: 100px;
+  border: 2px solid var(--border-color);
+  font-size: var(--font-small);
+}
+
+/* input */
+.MissingList .search-box input {
+  border: 2px solid var(--border-color);
+  flex: 1;
+  font-size: var(--font-small);
+  padding: 10px;
+}
+
+/* MissingItems */
+.MissingList .MissingItems {
+  width: 100%;
+  height: calc(100vh - 400px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 2px solid var(--border-color);
+  padding: 10px;
+  border-radius: 10px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  background-color: var(--bg-white-color);
+}
+
+.scroll-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+/* button */
+.MissingList .MissingList-btn {
+  width: 100%;
+}

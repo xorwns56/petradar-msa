@@ -1,0 +1,54 @@
+.custom-marker-outer-wrapper {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  z-index: -1;
+}
+
+.custom-marker-wrappers {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid white;
+  display: block;
+}
+
+.custom-marker-img-wrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.custom-marker-images {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.custom-marker-outer-wrapper::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  background-color: var(--main-color);
+  border-radius: 50%;
+  z-index: -1;
+  opacity: 0.1;
+  filter: blur(5px);
+  transition: 0.35s;
+}
+
+.custom-marker-outer-wrapper:hover .custom-marker-wrappers {
+  transform: scale(1.2);
+}
+
+.custom-marker-outer-wrapper:hover::after {
+  width: 180px;
+  height: 180px;
+  opacity: 0.2;
+}

@@ -1,0 +1,78 @@
+.Header {
+  width: 100%;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  padding: 15px 24px;
+  font-size: 16px;
+  background-color: var(--main-color);
+  color: var(--text-white);
+  cursor: pointer;
+}
+
+/* 내부 정렬 */
+.Header>div {
+  display: flex;
+}
+
+.Header img {
+  height: 30px;
+}
+
+.Header .header_left {
+  width: 35%;
+  justify-content: flex-start;
+}
+
+.Header .header_center {
+  width: 30%;
+  justify-content: center;
+  font-size: var(--font-body);
+  font-weight: bold;
+}
+
+.Header .header_center img {
+  height: 22px;
+}
+
+.Header .header_right {
+  width: 35%;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}
+
+.Header .header_right .Msg-bell {
+  position: relative;
+  background-image: url(/public/Msg-Bell.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  width: 22px;
+  height: 22px;
+  transition: 0.35s;
+}
+
+.Header .header_right .Msg-bell .Msg-cnt {
+  position: absolute;
+  right: -9px;
+  top: -9px;
+  background-color: var(--bg-white-color);
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  text-align: center;
+  line-height: 20px;
+  border-radius: 50%;
+  color: var(--main-color);
+  font-size: var(--font-small);
+}
+
+
+
+/* 모바일 */
+@media (max-width: 600px) {
+  .Header {
+    font-size: var(--font-small);
+  }
+}

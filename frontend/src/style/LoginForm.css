@@ -1,0 +1,110 @@
+.LoginForm .input_item {
+  position: relative;
+  height: 60px;
+  padding: 20px;
+  border: 1px solid var(--border-color);
+  margin-top: -1px;
+  display: flex;
+  align-items: center;
+}
+
+.LoginForm button,
+.LoginForm input {
+  border-radius: 0;
+  border: none;
+  outline: 0;
+  cursor: pointer;
+  width: 100%;
+  font-size: var(--font-size-base);
+}
+
+/* id, pw  border style */
+.LoginForm .input_item.id {
+  border-radius: 10px 10px 0 0;
+}
+
+.LoginForm .input_item.pw {
+  border-radius: 0 0 10px 10px;
+}
+
+.LoginForm .input_item > label {
+  position: absolute;
+  left: auto;
+  top: auto;
+  flex: 1;
+  font-size: var(--font-size-base);
+  font-weight: 400;
+  line-height: 22px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--subtitleL-color);
+  cursor: pointer;
+}
+
+.LoginForm .input_item.focus {
+  border: 2px solid var(--main-color);
+  z-index: 99;
+}
+
+/* .LoginForm .input_item.on > #user_id {
+  padding-right: 34px;
+}
+
+.LoginForm .input_item.on > #user_pw {
+  padding-right: 76px;
+}  */
+
+/* login id, pw caption */
+.LoginForm .input_item.on > label,
+.LoginForm .input_item.focus > label {
+  top: 3px;
+  font-size: var(--font-caption);
+}
+
+.LoginForm .loginIcon-box {
+  display: flex;
+  width: 82px;
+  justify-content: end;
+}
+
+.LoginForm .btn_delete,
+.LoginForm .btn_view {
+  width: 22px;
+  height: 22px;
+  margin: 9px;
+  background: none;
+  
+}
+
+.LoginForm .btn_delete > img,
+.LoginForm .btn_view > img {
+  width: 100%;
+  object-fit: cover;
+}
+
+.LoginForm .btn_login {
+  padding: 15px;
+  border-radius: 5px;
+  background-color: var(--border-color);
+  cursor: pointer;
+  margin: 20px 0 50px 0;
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: var(--subtitle-color);
+}
+
+.LoginForm .hide {
+  display: none;
+}
+
+.LoginForm .btn_login.on {
+  background-color: var(--main-color);
+  color: var(--text-white);
+}
+
+.LoginForm .error_message {
+  font-size: var(--font-caption);
+  color: var(--err-color);
+  font-weight: 600;
+  text-align: left;
+  padding: 10px 5px;
+}

@@ -1,0 +1,83 @@
+.MissingRevise {
+  height: 100%;
+}
+
+/* PageTitle */
+.MissingRevise .PageTitle {
+  text-align: center;
+  margin-top: 30px;
+  line-height: 1.5;
+  padding: 10px;
+  font-size: var(--font-title-lg-d);
+}
+
+.MissingRevise .MissingRevise-container {
+  height: 100%;
+}
+
+.MissingReviseForms {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 30px auto;
+  margin-bottom: 0;
+  border-radius: 50px 50px 0 0;
+  border: 2px solid var(--border-color);
+  width: 90%;
+  padding: 40px;
+  background-color: var(--bg-white-color);
+}
+
+.scroll-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.MissingReviseForms .MissingReviseForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.MissingReviseForms .MissingReviseForm h4,
+.MissingReviseForms .MissingReviseForm label {
+  font-size: var(--font-subtitle-lg-d);
+  font-weight: bold;
+}
+
+.MissingReviseForms .MissingReviseForm input,
+.MissingReviseForms .MissingReviseForm select {
+  width: 100%;
+  height: 50px;
+  border: 1px solid var(--border-color);
+  font-size: var(--font-small);
+  padding: 10px;
+  border-radius: 5px;
+  outline: none;
+  transition: border 0.3s;
+}
+
+.MissingReviseForms .MissingReviseForm input:focus,
+.MissingReviseForms .MissingReviseForm select:focus,
+.MissingReviseForms .MissingReviseForm textarea:focus {
+  border: 1px solid var(--main-color);
+}
+
+.MissingReviseForms .MissingReviseForm textarea {
+  height: 120px;
+  border: 1px solid var(--border-color);
+  font-size: var(--font-small);
+  padding: 10px;
+  resize: none;
+  overflow-y: auto;
+  outline: none;
+  transition: border 0.3s;
+  border-radius: 5px;
+}
+
+.MissingRevise-btn {
+  display: flex;
+}
+
+.MissingRevise-btn>div {
+  width: 50%;
+}

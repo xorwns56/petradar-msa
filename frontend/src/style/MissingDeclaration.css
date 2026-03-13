@@ -1,0 +1,73 @@
+.MissingDeclaration {
+  height: 100%;
+}
+
+/* PageTitle */
+.MissingDeclaration .PageTitle {
+  text-align: center;
+  margin-top: 30px;
+  line-height: 1.5;
+  padding: 10px;
+  font-size: var(--font-title-lg-d);
+}
+
+.MissingDeclaration .MissingDeclaration-container {
+  height: 100%;
+  padding: 0;
+}
+
+.MissingDeclarationForms {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 30px auto;
+  margin-bottom: 0;
+  border-radius: 50px 50px 0 0;
+  border: 2px solid var(--border-color);
+  width: 90%;
+  padding: 40px;
+  background-color: var(--bg-white-color);
+}
+
+
+.MissingDeclarationForms .MissingDeclarationForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.MissingDeclarationForms .MissingDeclarationForm h4,
+.MissingDeclarationForms .MissingDeclarationForm label {
+  font-size: var(--font-subtitle-lg-d);
+  font-weight: bold;
+}
+
+.MissingDeclarationForms .MissingDeclarationForm input,
+.MissingDeclarationForms .MissingDeclarationForm select {
+  width: 100%;
+  height: 50px;
+  border: 1px solid var(--border-color);
+  font-size: var(--font-small);
+  padding: 10px;
+  border-radius: 5px;
+  outline: none;
+  transition: border 0.3s;
+}
+
+.MissingDeclarationForms .MissingDeclarationForm input:focus,
+.MissingDeclarationForms .MissingDeclarationForm select:focus,
+.MissingDeclarationForms .MissingDeclarationForm textarea:focus {
+  border: 1px solid var(--main-color);
+}
+
+.MissingDeclarationForms .MissingDeclarationForm textarea {
+  height: 120px;
+  border: 1px solid var(--border-color);
+  font-size: var(--font-small);
+  padding: 10px;
+  resize: none;
+  overflow-y: auto;
+  outline: none;
+  transition: border 0.3s;
+  border-radius: 5px;
+}

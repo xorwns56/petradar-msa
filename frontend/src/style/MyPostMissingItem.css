@@ -1,0 +1,19 @@
+.MyPostMissingItem {
+  border-radius: 5px 5px 0px 0px;
+  padding: 5px 10px;
+  border: var(--border-color);
+  background-color: var(--subtitleL-color);
+  transition: 0.35s;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.MyPostMissingItem:hover {
+  background-color: var(--main-color);
+  color: var(--text-white);
+  font-weight: bold;
+}
+.MyPostMissingItem.active {
+  background-color: var(--main-color);
+  color: var(--text-white);
+  font-weight: bold;
+}

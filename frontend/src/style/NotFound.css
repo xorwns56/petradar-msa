@@ -1,0 +1,64 @@
+.NotFound {
+  position: relative;
+  height: 100vh;
+  background-color: var(--bg-new);
+}
+
+.NotFound .NotFound-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.NotFound .NotFound-container .text-contents {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  word-break: keep-all; /* 단어 기준으로 줄바꿈 */
+  white-space: normal; /* 기본 줄바꿈 허용 */
+  overflow-wrap: break-word; /* 박스 너비 넘을 경우 줄바꿈 */
+}
+
+.NotFound .NotFound-container .text-contents .notfoundNum {
+  font-size: 100px;
+  color: var(--main-color);
+}
+
+.NotFound .NotFound-container .text-contents h1 {
+  font-size: var(--font-title-xl-d);
+  color: var(--title-color);
+}
+
+.NotFound .NotFound-container .text-contents p {
+  font-size: var(--font-title-lg-d);
+  color: var(--subtitle-color);
+  line-height: 1.5;
+}
+
+.NotFound .NotFound-container .img-box img {
+  width: 300px;
+  margin: 10px;
+  object-fit: cover;
+}
+
+.HomgMove-btn {
+  width: 400px;
+  margin: 0 auto;
+}
+
+/* 모바일 */
+@media (max-width: 600px) {
+  .NotFound .NotFound-container .text-contents h1 {
+    font-size: var(--font-title-xl-m);
+  }
+
+  .NotFound .NotFound-container .text-contents p {
+    font-size: var(--font-title-lg-m);
+  }
+}

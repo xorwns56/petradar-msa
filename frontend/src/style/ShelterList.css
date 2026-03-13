@@ -1,0 +1,108 @@
+/* ShelterList 전체 높이 */
+.ShelterList {
+  height: 100vh;
+}
+
+.ShelterList .ShelterList-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+}
+
+/* 페이지 제목 */
+.ShelterList .PageTitle {
+  text-align: center;
+  margin: 30px;
+  padding: 10px;
+  line-height: 1.5;
+  font-size: var(--font-title-lg-d);
+  color: var(--title-color);
+}
+
+/* 지도 영역 */
+.ShelterList .Map-wrapper {
+  height: 30%;
+  min-height: 200px;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border 0.35s;
+}
+
+.ShelterList .Map-wrapper:hover {
+  border-color: var(--main-color);
+}
+
+/* 보호소 리스트 영역 */
+.ShelterList .ShelterList-contents {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  height: 51%;
+  padding-bottom: 30px;
+  overflow-y: auto;
+  scrollbar-width: none; 
+  -ms-overflow-style: none; 
+}
+.ShelterList .ShelterList-contents::-webkit-scrollbar {
+  display: none; 
+}
+
+/* 보호소 카드 */
+.shelter-card {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  background-color: var(--bg-white-color);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+/* 보호소 썸네일 */
+.shelter-thumb {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+/* 상세 이동 버튼 */
+.ShelterAnimalList-btn {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  transition: color 0.35s;
+}
+.ShelterAnimalList-btn:hover {
+  color: var(--main-color);
+}
+
+/* 로딩 화면 */
+.load-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  height: 100vh;
+  width: 100%;
+  background-color: var(--bg-new);
+}
+
+.load-wrapper .img-box img {
+  width: 300px;
+  margin: 10px;
+  object-fit: cover;
+}
+
+.load {
+  font-size: var(--font-title-xl-d);
+  font-weight: 500;
+  color: var(--title-color);
+  text-align: center;
+}

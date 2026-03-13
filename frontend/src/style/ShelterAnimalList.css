@@ -1,0 +1,51 @@
+/* ShelterAnimalList 전체 컨테이너 */
+.ShelterAnimalList {
+  height: 100vh;
+}
+
+.ShelterAnimalList .ShelterAnimalList-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+}
+
+/* 페이지 제목 */
+.ShelterAnimalList .PageTitle {
+  text-align: center;
+  margin-top: 30px;
+  padding: 10px;
+  line-height: 1.5;
+  font-size: var(--font-title-lg-d);
+  color: var(--title-color);
+}
+
+/* 정렬/검색 선택 박스 */
+.ShelterAnimalList .SearchBar select {
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  padding: 5px;
+  font-size: var(--font-small);
+}
+
+/* 동물 카드 목록 컨테이너 */
+.ShelterAnimalList .ShelterAnimalItems {
+  width: 100%;
+  height: calc(100vh - 250px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  background-color: var(--bg-white-color);
+}
+
+/* 스크롤 제거 (Chrome) */
+.ShelterAnimalList .ShelterAnimalItems::-webkit-scrollbar,
+.scroll-hidden::-webkit-scrollbar {
+  display: none;
+}
