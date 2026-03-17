@@ -79,6 +79,71 @@ services:
     volumes:
       - kafka-data:/var/lib/kafka/data
 
+  # ===========================================
+  # Prometheus - 메트릭 수집
+  # 각 서비스의 /actuator/prometheus, /metrics 엔드포인트에서 메트릭 수집
+  # 접속: http://localhost:9090
+  # ===========================================
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml  # 수집 대상 설정
+      - prometheus-data:/prometheus                                        # 메트릭 데이터 영속성
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=7d'  # 7일간 메트릭 보존
+
+  # ===========================================
+  # Grafana - 메트릭/로그 시각화 대시보드
+  # Prometheus(메트릭) + Loki(로그) 데이터를 시각화
+  # 접속: http://localhost:3000 (admin / admin)
+  # ===========================================
+  grafana:
+    image: grafana/grafana:11.0.0
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning            # 데이터소스/대시보드 자동 등록
+      - ./docker/grafana/dashboards:/var/lib/grafana/dashboards            # 대시보드 JSON 파일
+    depends_on:
+      - prometheus
+      - loki
+
+  # ===========================================
+  # Loki - 경량 로그 수집/검색 엔진
+  # ELK 대비 리소스 절약, Grafana에서 바로 로그 검색 가능
+  # ===========================================
+  loki:
+    image: grafana/loki:3.0.0
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./docker/loki/loki-config.yml:/etc/loki/local-config.yaml  # Loki 설정
+      - loki-data:/loki                                             # 로그 데이터 영속성
+
+  # ===========================================
+  # Promtail - Docker 컨테이너 로그 수집기
+  # 모든 컨테이너의 stdout/stderr를 자동 수집하여 Loki로 전송
+  # ===========================================
+  promtail:
+    image: grafana/promtail:3.0.0
+    container_name: promtail
+    volumes:
+      - ./docker/promtail/promtail-config.yml:/etc/promtail/config.yml  # Promtail 설정
+      - /var/run/docker.sock:/var/run/docker.sock                        # Docker 소켓 (컨테이너 로그 접근)
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+
 # ===========================================
 # Named Volumes - 컨테이너 삭제해도 데이터 보존
 # docker volume ls 로 확인 가능
@@ -88,3 +153,6 @@ volumes:
   redis-data:       # Redis 데이터 저장
   kafka-data:       # Kafka 데이터 저장
   minio-data:       # MinIO 이미지 저장
+  prometheus-data:  # Prometheus 메트릭 저장
+  grafana-data:     # Grafana 설정/대시보드 저장
+  loki-data:        # Loki 로그 저장

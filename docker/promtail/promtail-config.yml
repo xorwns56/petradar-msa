@@ -1,0 +1,28 @@
+# ===========================================
+# Promtail 설정 파일
+# Docker 컨테이너 로그를 수집하여 Loki로 전송
+# ===========================================
+
+server:
+  http_listen_port: 9080
+
+positions:
+  filename: /tmp/positions.yaml  # 로그 읽기 위치 기록 (재시작 시 중복 방지)
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push  # Loki 전송 엔드포인트
+
+scrape_configs:
+  # Docker 컨테이너 로그 수집
+  - job_name: docker
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock  # Docker 소켓으로 컨테이너 자동 탐지
+        refresh_interval: 5s
+    relabel_configs:
+      # 컨테이너 이름을 라벨로 추가 (Grafana에서 필터링용)
+      - source_labels: ['__meta_docker_container_name']
+        regex: '/(.*)'
+        target_label: 'container'
+      # Docker Compose 서비스 이름을 라벨로 추가
+      - source_labels: ['__meta_docker_container_label_com_docker_compose_service']
+        target_label: 'service'

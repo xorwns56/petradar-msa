@@ -1,0 +1,43 @@
+# ===========================================
+# Loki 설정 파일
+# 경량 로그 수집/검색 엔진 (ELK 대비 리소스 절약)
+# ===========================================
+
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+
+common:
+  path_prefix: /loki
+  storage:
+    filesystem:
+      chunks_directory: /loki/chunks
+      rules_directory: /loki/rules
+  replication_factor: 1
+  ring:
+    kvstore:
+      store: inmemory
+
+# 인덱스 스키마 설정 (BoltDB + 파일시스템)
+schema_config:
+  configs:
+    - from: 2020-10-24
+      store: tsdb
+      object_store: filesystem
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
+
+# 보존 기간 설정
+limits_config:
+  retention_period: 168h  # 7일간 로그 보존
+
+# 테이블 매니저 - 오래된 로그 자동 삭제
+compactor:
+  working_directory: /loki/compactor
+  compaction_interval: 10m
+  retention_enabled: true
+  retention_delete_delay: 2h
+  delete_request_store: filesystem
