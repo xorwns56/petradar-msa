@@ -53,6 +53,22 @@ jobs:
           git clone --depth 1 https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git .
           git checkout ${{ github.sha }}
 
+      # Java 서비스 테스트 실행 (gateway, user, report)
+      - name: Run tests (Java)
+        if: contains(fromJSON('["gateway-service","user-service","report-service"]'), matrix.service.name)
+        run: |
+          cd ${{ matrix.service.context }}
+          chmod +x ./gradlew
+          ./gradlew test --no-daemon
+
+      # Python 서비스 테스트 실행 (search-service)
+      - name: Run tests (Python)
+        if: matrix.service.name == 'search-service'
+        run: |
+          cd ${{ matrix.service.context }}
+          pip install pytest httpx faststream[kafka] requests pydantic sqlalchemy -q
+          python -m pytest tests/ -v
+
       # arm64 크로스 컴파일을 위한 QEMU 설치 (CI 러너는 amd64이므로 필요)
       - name: Set up QEMU
         run: docker run --privileged --rm tonistiigi/binfmt --install all
