@@ -1,6 +1,8 @@
 package com.xorwns56.user.auth;
 
 import com.xorwns56.user.user.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.Map;
 
+@Tag(name = "Auth", description = "인증 API (로그인/회원가입/토큰 재발급)")
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -22,6 +25,7 @@ public class AuthController {
     private static final String REFRESH_TOKEN_COOKIE = "refreshToken";
 
     // 로그인 - Access Token 응답 body, Refresh Token HttpOnly 쿠키 설정
+    @Operation(summary = "로그인", description = "Access Token을 응답 body로, Refresh Token을 HttpOnly 쿠키로 설정합니다.")
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody AuthDTO.LoginRequest request,
                                    HttpServletResponse response) {
@@ -35,6 +39,7 @@ public class AuthController {
     }
 
     // 회원가입
+    @Operation(summary = "회원가입")
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody AuthDTO.RegisterRequest request) {
         try {
@@ -46,12 +51,14 @@ public class AuthController {
     }
 
     // 아이디 중복 확인
+    @Operation(summary = "아이디 중복 확인")
     @GetMapping("/check-exist")
     public ResponseEntity<Boolean> checkExist(@RequestParam String loginId) {
         return ResponseEntity.ok(userService.existsByLoginId(loginId));
     }
 
     // Access Token 재발급 - 쿠키의 Refresh Token 검증 후 새 Access Token 발급
+    @Operation(summary = "Access Token 재발급", description = "쿠키의 Refresh Token을 검증하고 새 Access Token을 발급합니다.")
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(HttpServletRequest request) {
         String refreshToken = extractRefreshTokenFromCookie(request);
@@ -67,6 +74,7 @@ public class AuthController {
     }
 
     // 로그아웃 - Redis Refresh Token 삭제 + 쿠키 만료
+    @Operation(summary = "로그아웃", description = "Redis에서 Refresh Token을 삭제하고 쿠키를 만료시킵니다.")
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = extractRefreshTokenFromCookie(request);

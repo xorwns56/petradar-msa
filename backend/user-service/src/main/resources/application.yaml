@@ -13,6 +13,13 @@ jwt:
   access-expiration: 600000     # Access Token 만료시간 10분 (ms)
   refresh-expiration: 86400000  # Refresh Token 만료시간 24시간 (ms)
 
+# SpringDoc Swagger UI 설정
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
 management:
   endpoints:
     web:

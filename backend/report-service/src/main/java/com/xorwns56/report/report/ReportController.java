@@ -1,5 +1,7 @@
 package com.xorwns56.report.report;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+@Tag(name = "Report", description = "목격 제보 API")
 @RestController
 @RequestMapping("/api/report")
 @RequiredArgsConstructor
@@ -18,12 +21,14 @@ public class ReportController {
     private final ReportService reportService;
 
     // 목격 제보 상세 조회
+    @Operation(summary = "목격 제보 상세 조회")
     @GetMapping("/{reportId}")
     public ResponseEntity<ReportDTO.Response> getDetail(@PathVariable Long reportId) {
         return ResponseEntity.ok(reportService.getDetail(reportId));
     }
 
     // 실종 신고별 목격 제보 목록 조회 (페이지네이션)
+    @Operation(summary = "실종 신고별 목격 제보 목록 조회")
     @GetMapping("/missing/{missingId}")
     public ResponseEntity<Page<ReportDTO.Response>> getList(
             @PathVariable Long missingId,
@@ -32,6 +37,7 @@ public class ReportController {
     }
 
     // 목격 제보 등록 (비회원도 가능 - X-User-Id 없을 수 있음)
+    @Operation(summary = "목격 제보 등록", description = "비회원도 가능 (X-User-Id 헤더 선택)")
     @PostMapping("/missing/{missingId}")
     public ResponseEntity<?> create(
             @PathVariable Long missingId,
