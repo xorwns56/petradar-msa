@@ -1,4 +1,4 @@
-import '@/style/MainMenu.css';
+import './MainMenu.css';
 
 const MainMenu = ({ mainTitle, subTitle, imgLink, onclick }) => {
   return (

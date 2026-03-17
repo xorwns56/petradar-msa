@@ -1,5 +1,5 @@
-import '@/style/ModalDetail.css';
-import '@/style/ShelterInfo.css';
+import './ModalDetail.css';
+import './ShelterInfo.css';
 import Button from '@/shared/ui/button/Button';
 
 const ShelterInfo = ({ shelter, onClose }) => {

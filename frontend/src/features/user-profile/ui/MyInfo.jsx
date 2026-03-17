@@ -1,4 +1,4 @@
-import "@/style/MyInfo.css";
+import "./MyInfo.css";
 import { useState, useEffect } from "react";
 const MyInfo = ({ userInfo, onUpdate, onDelete, onLogOut }) => {
   const [editMode, setEditMode] = useState(false);

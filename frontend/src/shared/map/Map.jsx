@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import loadKakaoMap from "@/shared/map/KakaoMapLoader";
-import "@/style/Map.css";
+import "./Map.css";
 
 const Map = ({ shelters, onSelect, setCenterRef }) => {
   const mapRef = useRef(null);

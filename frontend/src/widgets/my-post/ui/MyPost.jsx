@@ -1,4 +1,4 @@
-import "@/style/MyPost.css";
+import "./MyPost.css";
 import { useEffect, useState } from "react";
 import Pagination from "@/shared/ui/pagination/Pagination";
 import MypageModalDetail from "@/entities/report/ui/MypageModalDetail";

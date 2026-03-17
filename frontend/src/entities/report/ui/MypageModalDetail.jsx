@@ -1,4 +1,4 @@
-import "@/style/MypageModalDetail.css";
+import "./MypageModalDetail.css";
 
 import { getMissingImage } from "@/shared/lib/get-missingPet-image"; // 수정필요
 import { missingPet } from "@/shared/lib/missingPet"; // 수정필요

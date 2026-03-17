@@ -1,4 +1,4 @@
-import "@/style/SideBar.css";
+import "./SideBar.css";
 import Button from "@/shared/ui/button/Button";
 import ReportAlertBox from "@/features/notification/ui/ReportAlertBox";
 import MissingAlertBox from "@/features/notification/ui/MissingAlertBox";

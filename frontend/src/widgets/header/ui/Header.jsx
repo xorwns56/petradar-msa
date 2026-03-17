@@ -1,4 +1,4 @@
-import "@/style/Header.css";
+import "./Header.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSidebarStore } from "@/widgets/sidebar/model/sidebarStore";
 import { useNotificationStore } from "@/features/notification/model/notificationStore";

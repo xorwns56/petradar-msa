@@ -1,4 +1,4 @@
-import "@/style/ShelterAnimalList.css";
+import "./ShelterAnimalList.css";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useGetShelterAnimals } from "@/entities/shelter/api/shelterApi";

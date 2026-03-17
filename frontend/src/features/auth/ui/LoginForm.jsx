@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "@/style/LoginForm.css";
+import "./LoginForm.css";
 const LoginForm = ({ isExist, onLogin }) => {
   const onSubmit = async (event) => {
     event.preventDefault();

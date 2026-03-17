@@ -1,4 +1,4 @@
-import "@/style/MyPage.css";
+import "./MyPage.css";
 import Header from "@/widgets/header/ui/Header";
 import MyInfo from "@/features/user-profile/ui/MyInfo";
 import MyPost from "@/widgets/my-post/ui/MyPost";

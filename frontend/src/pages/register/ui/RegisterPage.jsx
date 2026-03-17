@@ -1,4 +1,4 @@
-import '@/style/Register.css';
+import './Register.css';
 import RegisterForm from '@/features/auth/ui/RegisterForm';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '@/shared/api/apiInstance';

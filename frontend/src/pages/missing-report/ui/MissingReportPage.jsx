@@ -1,4 +1,4 @@
-import "@/style/MissingReport.css";
+import "./MissingReport.css";
 import Header from "@/widgets/header/ui/Header";
 import Button from "@/shared/ui/button/Button";
 import LocationMap from "@/shared/map/LocationMap";

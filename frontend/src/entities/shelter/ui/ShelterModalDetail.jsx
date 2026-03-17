@@ -1,5 +1,5 @@
 import Button from "@/shared/ui/button/Button";
-import "@/style/ModalDetail.css";
+import "./ModalDetail.css";
 
 const ShelterModalDetail = ({ animal, onClose }) => {
   if (!animal) return null;

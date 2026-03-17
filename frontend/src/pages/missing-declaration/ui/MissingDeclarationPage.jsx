@@ -1,4 +1,4 @@
-import "@/style/MissingDeclaration.css";
+import "./MissingDeclaration.css";
 import { useState } from "react";
 import { dogBreed, catBreed, etcBreed } from "@/shared/lib/get-pet-breed";
 import Header from "@/widgets/header/ui/Header";

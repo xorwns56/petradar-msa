@@ -1,4 +1,4 @@
-import "@/style/MyPostMissingItem.css";
+import "./MyPostMissingItem.css";
 const MyPostMissingItem = ({ isActive, petName, onClick }) => {
   return (
     <button

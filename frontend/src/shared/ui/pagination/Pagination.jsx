@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "@/style/Pagination.css";
+import "./Pagination.css";
 const Pagination = ({ totalItems, page, itemSize, onClick, pageSize = 5 }) => {
   const totalPages = Math.ceil(totalItems / itemSize);
   //const totalPageBlocks = Math.ceil(totalPages / pageSize);

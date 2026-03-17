@@ -1,4 +1,4 @@
-import "@/style/AlertBox.css";
+import "./AlertBox.css";
 const ReportAlertBox = ({
   currentUser,
   id,

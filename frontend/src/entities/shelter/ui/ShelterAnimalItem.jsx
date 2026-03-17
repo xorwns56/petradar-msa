@@ -1,4 +1,4 @@
-import "@/style/ShelterAnimalItem.css";
+import "./ShelterAnimalItem.css";
 
 const ShelterAnimalItem = ({
   petId,

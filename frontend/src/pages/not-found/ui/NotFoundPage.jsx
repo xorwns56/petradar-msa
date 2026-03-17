@@ -1,4 +1,4 @@
-import '@/style/NotFound.css';
+import './NotFound.css';
 import Button from '@/shared/ui/button/Button';
 import { useNavigate } from 'react-router-dom';
 

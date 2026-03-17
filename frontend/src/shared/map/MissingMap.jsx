@@ -3,7 +3,7 @@ import PetModalDetail from "@/entities/missing/ui/PetModalDetail";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore, getUserId } from "@/features/auth/model/authStore";
 import loadKakaoMap from "@/shared/map/KakaoMapLoader";
-import "@/style/MissingMap.css";
+import "./MissingMap.css";
 
 const MissingMap = ({missingList}) => {
   const mapRef = useRef(null); // 카카오 지도 객체 참조

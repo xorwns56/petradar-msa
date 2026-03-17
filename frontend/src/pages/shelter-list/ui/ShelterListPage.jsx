@@ -1,5 +1,5 @@
 import ShelterInfo from "@/entities/shelter/ui/ShelterInfo";
-import "@/style/ShelterList.css";
+import "./ShelterList.css";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ShelterModalDetail from "@/entities/shelter/ui/ShelterModalDetail";

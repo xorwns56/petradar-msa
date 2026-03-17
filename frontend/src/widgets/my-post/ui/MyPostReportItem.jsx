@@ -1,4 +1,4 @@
-import "@/style/MyPostReportItem.css";
+import "./MyPostReportItem.css";
 const MyPostReportItem = ({ title, content, petImage, onClick }) => {
   return (
     <div onClick={onClick} className="MyPostReportItem">

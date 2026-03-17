@@ -1,4 +1,4 @@
-import '@/style/Home.css';
+import './Home.css';
 import Header from '@/widgets/header/ui/Header';
 import MainMenu from '@/widgets/main-menu/ui/MainMenu';
 import { useNavigate } from 'react-router-dom';

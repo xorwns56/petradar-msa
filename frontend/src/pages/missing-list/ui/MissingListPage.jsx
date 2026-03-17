@@ -1,4 +1,4 @@
-import "@/style/MissingList.css";
+import "./MissingList.css";
 import { useState, useEffect, useRef } from "react";
 import Button from "@/shared/ui/button/Button";
 import Header from "@/widgets/header/ui/Header";

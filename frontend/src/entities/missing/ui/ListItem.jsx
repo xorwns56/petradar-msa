@@ -1,4 +1,4 @@
-import "@/style/ListItem.css";
+import "./ListItem.css";
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 

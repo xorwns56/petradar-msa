@@ -1,4 +1,4 @@
-import "@/style/MissingRevise.css";
+import "./MissingRevise.css";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { dogBreed, catBreed, etcBreed } from "@/shared/lib/get-pet-breed";

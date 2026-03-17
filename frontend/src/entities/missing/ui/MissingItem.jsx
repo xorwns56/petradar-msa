@@ -1,4 +1,4 @@
-import "@/style/MissingItem.css";
+import "./MissingItem.css";
 import { getMissingImage } from "@/shared/lib/get-missingPet-image";
 import Button from "@/shared/ui/button/Button";
 

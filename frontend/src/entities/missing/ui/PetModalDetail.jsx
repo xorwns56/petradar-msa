@@ -1,4 +1,4 @@
-import "@/style/ModalDetail.css";
+import "./ModalDetail.css";
 import Button from "@/shared/ui/button/Button";
 
 const PetModalDetail = ({ missingPet, onClick, myMissing, isOpen, onClose }) => {

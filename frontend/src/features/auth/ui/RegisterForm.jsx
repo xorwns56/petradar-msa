@@ -1,4 +1,4 @@
-import "@/style/RegisterForm.css";
+import "./RegisterForm.css";
 import { useState } from "react";
 const RegisterForm = ({ isExist, onRegister }) => {
   const formCheck = async (name) => {

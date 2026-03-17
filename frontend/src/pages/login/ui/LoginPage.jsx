@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import "@/style/Login.css";
+import "./Login.css";
 import LoginForm from "@/features/auth/ui/LoginForm";
 import { useAuthStore } from "@/features/auth/model/authStore";
 import api from "@/shared/api/apiInstance";
