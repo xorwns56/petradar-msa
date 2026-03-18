@@ -1,0 +1,51 @@
+# ===========================================
+# Promtail DaemonSet
+# 모든 노드에서 Pod 로그를 수집하여 Loki로 전송
+# DaemonSet: 클러스터의 각 노드에 1개씩 배포
+# ===========================================
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: promtail
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "petradar.labels" . | nindent 4 }}
+    app: promtail
+spec:
+  selector:
+    matchLabels:
+      app: promtail
+  template:
+    metadata:
+      labels:
+        app: promtail
+    spec:
+      serviceAccountName: promtail
+      containers:
+        - name: promtail
+          image: {{ .Values.promtail.image }}
+          args:
+            - '-config.file=/etc/promtail/promtail-config.yml'
+          volumeMounts:
+            # Promtail 설정 파일
+            - name: config
+              mountPath: /etc/promtail/promtail-config.yml
+              subPath: promtail-config.yml
+            # 노드의 Pod 로그 디렉토리 마운트
+            - name: varlog
+              mountPath: /var/log
+              readOnly: true
+            # 컨테이너 로그 심볼릭 링크 대상
+            - name: containers
+              mountPath: /var/lib/docker/containers
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: promtail-config
+        - name: varlog
+          hostPath:
+            path: /var/log
+        - name: containers
+          hostPath:
+            path: /var/lib/docker/containers

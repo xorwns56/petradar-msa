@@ -1,0 +1,43 @@
+# ===========================================
+# Loki Deployment
+# 경량 로그 수집/검색 엔진 (ELK 대비 리소스 절약)
+# ===========================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loki
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "petradar.labels" . | nindent 4 }}
+    app: loki
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: loki
+  template:
+    metadata:
+      labels:
+        app: loki
+    spec:
+      containers:
+        - name: loki
+          image: {{ .Values.loki.image }}
+          args:
+            - '-config.file=/etc/loki/loki-config.yml'
+          ports:
+            - containerPort: {{ .Values.loki.port }}
+          volumeMounts:
+            - name: config
+              mountPath: /etc/loki/loki-config.yml
+              subPath: loki-config.yml
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: {{ .Values.loki.port }}
+            initialDelaySeconds: 15
+            periodSeconds: 10
+      volumes:
+        - name: config
+          configMap:
+            name: loki-config

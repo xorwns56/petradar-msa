@@ -1,0 +1,18 @@
+# ===========================================
+# Grafana Service
+# 클러스터 내부에서 grafana:3000 으로 접근
+# ===========================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "petradar.labels" . | nindent 4 }}
+    app: grafana
+spec:
+  selector:
+    app: grafana
+  ports:
+    - port: {{ .Values.grafana.port }}
+      targetPort: {{ .Values.grafana.port }}

@@ -1,0 +1,48 @@
+# ===========================================
+# Prometheus 설정 ConfigMap
+# k8s 서비스 DNS로 메트릭 수집 대상 지정
+# ===========================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "petradar.labels" . | nindent 4 }}
+data:
+  prometheus.yml: |
+    # 전역 설정
+    global:
+      scrape_interval: 15s      # 메트릭 수집 주기
+      evaluation_interval: 15s  # 알림 규칙 평가 주기
+
+    # 수집 대상 설정
+    scrape_configs:
+      # Prometheus 자체 모니터링
+      - job_name: 'prometheus'
+        static_configs:
+          - targets: ['localhost:9090']
+
+      # API Gateway - 모든 요청이 거쳐가므로 전체 트래픽 파악 가능
+      - job_name: 'gateway-service'
+        metrics_path: '/actuator/prometheus'
+        static_configs:
+          - targets: ['gateway:{{ .Values.gateway.port }}']
+
+      # User Service - 사용자 인증/관리 관련 메트릭
+      - job_name: 'user-service'
+        metrics_path: '/actuator/prometheus'
+        static_configs:
+          - targets: ['user-service:{{ .Values.userService.port }}']
+
+      # Report Service - 실종/발견 신고 관련 메트릭
+      - job_name: 'report-service'
+        metrics_path: '/actuator/prometheus'
+        static_configs:
+          - targets: ['report-service:{{ .Values.reportService.port }}']
+
+      # Search Service - 이미지/텍스트 유사도 검색 관련 메트릭
+      - job_name: 'search-service'
+        metrics_path: '/metrics'
+        static_configs:
+          - targets: ['search-service:{{ .Values.searchService.port }}']

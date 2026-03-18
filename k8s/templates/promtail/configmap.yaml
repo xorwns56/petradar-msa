@@ -1,0 +1,43 @@
+# ===========================================
+# Promtail 설정 ConfigMap
+# k8s Pod 로그를 수집하여 Loki로 전송
+# ===========================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: promtail-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "petradar.labels" . | nindent 4 }}
+data:
+  promtail-config.yml: |
+    server:
+      http_listen_port: 9080
+
+    positions:
+      filename: /tmp/positions.yaml  # 로그 읽기 위치 기록 (재시작 시 중복 방지)
+
+    clients:
+      - url: http://loki:{{ .Values.loki.port }}/loki/api/v1/push  # Loki 전송 엔드포인트
+
+    scrape_configs:
+      # k8s Pod 로그 수집 (네임스페이스 내)
+      - job_name: kubernetes-pods
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names:
+                - {{ .Release.Namespace }}
+        relabel_configs:
+          # Pod 이름을 라벨로 추가
+          - source_labels: ['__meta_kubernetes_pod_name']
+            target_label: 'pod'
+          # 네임스페이스 라벨 추가
+          - source_labels: ['__meta_kubernetes_namespace']
+            target_label: 'namespace'
+          # 컨테이너 이름을 라벨로 추가
+          - source_labels: ['__meta_kubernetes_pod_container_name']
+            target_label: 'container'
+          # app 라벨을 service로 매핑 (Grafana 필터링용)
+          - source_labels: ['__meta_kubernetes_pod_label_app']
+            target_label: 'service'

@@ -44,6 +44,25 @@ zipkin:
   image: openzipkin/zipkin:3
   port: 9411
 
+# 모니터링 스택
+prometheus:
+  image: prom/prometheus:v2.51.0
+  port: 9090
+  retention: 7d  # 메트릭 보존 기간
+
+grafana:
+  image: grafana/grafana:11.0.0
+  port: 3000
+  adminUser: admin
+  adminPassword: admin
+
+loki:
+  image: grafana/loki:3.0.0
+  port: 3100
+
+promtail:
+  image: grafana/promtail:3.0.0
+
 # JWT 시크릿 - 배포 시 직접 주입 (git에 올리지 않음)
 # helm install petradar ./k8s --set jwtSecret="실제시크릿값"
 jwtSecret: ""

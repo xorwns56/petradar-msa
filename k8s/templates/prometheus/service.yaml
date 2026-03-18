@@ -1,0 +1,18 @@
+# ===========================================
+# Prometheus Service
+# 클러스터 내부에서 prometheus:9090 으로 접근
+# ===========================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "petradar.labels" . | nindent 4 }}
+    app: prometheus
+spec:
+  selector:
+    app: prometheus
+  ports:
+    - port: {{ .Values.prometheus.port }}
+      targetPort: {{ .Values.prometheus.port }}

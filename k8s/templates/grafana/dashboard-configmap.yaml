@@ -1,0 +1,109 @@
+# ===========================================
+# Grafana 대시보드 JSON ConfigMap
+# PetRadar 서비스 모니터링 대시보드
+# ===========================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "petradar.labels" . | nindent 4 }}
+data:
+  petradar-overview.json: |
+    {
+      "annotations": { "list": [] },
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 1,
+      "links": [],
+      "panels": [
+        {
+          "title": "서비스 상태 (UP/DOWN)",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 24, "x": 0, "y": 0 },
+          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+          "targets": [
+            { "expr": "up", "legendFormat": "{{`{{job}}`}}" }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "mappings": [
+                { "type": "value", "options": { "0": { "text": "DOWN", "color": "red" }, "1": { "text": "UP", "color": "green" } } }
+              ],
+              "thresholds": { "steps": [ { "value": null, "color": "red" }, { "value": 1, "color": "green" } ] }
+            }
+          },
+          "options": { "colorMode": "background", "graphMode": "none", "textMode": "auto" }
+        },
+        {
+          "title": "HTTP 요청 수 (초당)",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+          "targets": [
+            { "expr": "sum(rate(http_server_requests_seconds_count{job=~\"gateway-service|user-service|report-service\"}[1m])) by (job)", "legendFormat": "{{`{{job}}`}}" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "reqps" } }
+        },
+        {
+          "title": "HTTP 응답 시간 (p95)",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+          "targets": [
+            { "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{job=~\"gateway-service|user-service|report-service\"}[1m])) by (le, job))", "legendFormat": "{{`{{job}}`}} p95" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "s" } }
+        },
+        {
+          "title": "HTTP 에러율 (4xx + 5xx)",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+          "targets": [
+            { "expr": "sum(rate(http_server_requests_seconds_count{job=~\"gateway-service|user-service|report-service\", status=~\"4..|5..\"}[1m])) by (job)", "legendFormat": "{{`{{job}}`}}" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "reqps" } }
+        },
+        {
+          "title": "JVM 힙 메모리 사용량",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+          "targets": [
+            { "expr": "jvm_memory_used_bytes{job=~\"gateway-service|user-service|report-service\", area=\"heap\"} / 1024 / 1024", "legendFormat": "{{`{{job}}`}}" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "decmbytes" } }
+        },
+        {
+          "title": "Search Service 요청 수 (초당)",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
+          "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+          "targets": [
+            { "expr": "sum(rate(http_requests_total{job=\"search-service\"}[1m])) by (handler)", "legendFormat": "{{`{{handler}}`}}" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "reqps" } }
+        },
+        {
+          "title": "최근 로그 (전체 서비스)",
+          "type": "logs",
+          "gridPos": { "h": 10, "w": 24, "x": 0, "y": 28 },
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "targets": [
+            { "expr": "{service=~\".+\"} |= ``", "refId": "A" }
+          ],
+          "options": { "showTime": true, "sortOrder": "Descending", "enableLogDetails": true }
+        }
+      ],
+      "schemaVersion": 39,
+      "tags": ["petradar"],
+      "templating": { "list": [] },
+      "time": { "from": "now-30m", "to": "now" },
+      "timepicker": {},
+      "timezone": "Asia/Seoul",
+      "title": "PetRadar 서비스 모니터링",
+      "uid": "petradar-overview",
+      "version": 1
+    }
