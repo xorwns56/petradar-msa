@@ -41,6 +41,8 @@ spec:
           volumeMounts:
             - name: minio-data
               mountPath: /data
+          resources:
+            {{- toYaml .Values.minio.resources | nindent 12 }}
           readinessProbe:
             httpGet:
               path: /minio/health/ready

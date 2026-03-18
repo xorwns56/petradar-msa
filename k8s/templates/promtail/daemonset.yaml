@@ -26,6 +26,8 @@ spec:
           image: {{ .Values.promtail.image }}
           args:
             - '-config.file=/etc/promtail/promtail-config.yml'
+          resources:
+            {{- toYaml .Values.promtail.resources | nindent 12 }}
           volumeMounts:
             # Promtail 설정 파일
             - name: config

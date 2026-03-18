@@ -21,6 +21,8 @@ spec:
           image: {{ .Values.zipkin.image }}
           ports:
             - containerPort: {{ .Values.zipkin.port }}
+          resources:
+            {{- toYaml .Values.zipkin.resources | nindent 12 }}
           readinessProbe:
             httpGet:
               path: /health

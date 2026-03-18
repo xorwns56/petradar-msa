@@ -21,6 +21,8 @@ spec:
           image: {{ .Values.redis.image }}
           ports:
             - containerPort: {{ .Values.redis.port }}
+          resources:
+            {{- toYaml .Values.redis.resources | nindent 12 }}
           readinessProbe:
             exec:
               command:

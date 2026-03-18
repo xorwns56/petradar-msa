@@ -32,6 +32,8 @@ spec:
                   key: postgres-password
             - name: DATABASE_URL
               value: "postgresql://postgres:$(POSTGRES_PASSWORD)@postgres:5432/search_db"
+          resources:
+            {{- toYaml .Values.searchService.resources | nindent 12 }}
           readinessProbe:
             httpGet:
               path: /health

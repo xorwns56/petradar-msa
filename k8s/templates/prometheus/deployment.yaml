@@ -32,6 +32,8 @@ spec:
             - name: config
               mountPath: /etc/prometheus/prometheus.yml
               subPath: prometheus.yml
+          resources:
+            {{- toYaml .Values.prometheus.resources | nindent 12 }}
           readinessProbe:
             httpGet:
               path: /-/ready

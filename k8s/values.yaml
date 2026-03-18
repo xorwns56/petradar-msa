@@ -23,14 +23,23 @@ postgres:
   username: postgres
   password: "1234"
   storage: 5Gi
+  resources:
+    requests: { cpu: 200m, memory: 256Mi }
+    limits:   { cpu: 500m, memory: 512Mi }
 
 redis:
   image: redis:7-alpine
   port: 6379
+  resources:
+    requests: { cpu: 100m, memory: 64Mi }
+    limits:   { cpu: 200m, memory: 128Mi }
 
 kafka:
   image: confluentinc/cp-kafka:7.6.0
   port: 9092
+  resources:
+    requests: { cpu: 200m, memory: 512Mi }
+    limits:   { cpu: 500m, memory: 1Gi }
 
 minio:
   image: minio/minio:latest
@@ -39,29 +48,47 @@ minio:
   # 배포 시 직접 주입 (secrets.yaml 사용)
   accessKey: ""
   secretKey: ""
+  resources:
+    requests: { cpu: 100m, memory: 128Mi }
+    limits:   { cpu: 300m, memory: 256Mi }
 
 zipkin:
   image: openzipkin/zipkin:3
   port: 9411
+  resources:
+    requests: { cpu: 100m, memory: 128Mi }
+    limits:   { cpu: 300m, memory: 512Mi }
 
 # 모니터링 스택
 prometheus:
   image: prom/prometheus:v2.51.0
   port: 9090
   retention: 7d  # 메트릭 보존 기간
+  resources:
+    requests: { cpu: 100m, memory: 256Mi }
+    limits:   { cpu: 300m, memory: 512Mi }
 
 grafana:
   image: grafana/grafana:11.0.0
   port: 3000
   adminUser: admin
   adminPassword: admin
+  resources:
+    requests: { cpu: 100m, memory: 128Mi }
+    limits:   { cpu: 300m, memory: 256Mi }
 
 loki:
   image: grafana/loki:3.0.0
   port: 3100
+  resources:
+    requests: { cpu: 100m, memory: 128Mi }
+    limits:   { cpu: 300m, memory: 256Mi }
 
 promtail:
   image: grafana/promtail:3.0.0
+  resources:
+    requests: { cpu: 50m, memory: 64Mi }
+    limits:   { cpu: 100m, memory: 128Mi }
 
 # JWT 시크릿 - 배포 시 직접 주입 (git에 올리지 않음)
 # helm install petradar ./k8s --set jwtSecret="실제시크릿값"
@@ -74,22 +101,37 @@ jwtSecret: ""
 gateway:
   replicas: 1
   port: 8080
+  resources:
+    requests: { cpu: 200m, memory: 256Mi }
+    limits:   { cpu: 500m, memory: 512Mi }
 
 userService:
   replicas: 1
   port: 8080
+  resources:
+    requests: { cpu: 200m, memory: 256Mi }
+    limits:   { cpu: 500m, memory: 512Mi }
 
 reportService:
   replicas: 1
   port: 8080
+  resources:
+    requests: { cpu: 200m, memory: 256Mi }
+    limits:   { cpu: 500m, memory: 512Mi }
 
 searchService:
   replicas: 1
   port: 8000
+  resources:
+    requests: { cpu: 300m, memory: 1Gi }   # CLIP 모델 로딩에 메모리 필요
+    limits:   { cpu: '1', memory: 2Gi }
 
 frontend:
   replicas: 1
   port: 3000
+  resources:
+    requests: { cpu: 50m, memory: 64Mi }
+    limits:   { cpu: 200m, memory: 128Mi }
 
 # =============================================================================
 # Ingress

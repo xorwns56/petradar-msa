@@ -42,6 +42,8 @@ spec:
               value: "1"
             - name: CLUSTER_ID
               value: "MkU3OEVBNTcwNTJENDM2Qk"
+          resources:
+            {{- toYaml .Values.kafka.resources | nindent 12 }}
           readinessProbe:
             exec:
               command:

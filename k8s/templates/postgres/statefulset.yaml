@@ -35,6 +35,8 @@ spec:
               mountPath: /var/lib/postgresql/data
             - name: init-sql
               mountPath: /docker-entrypoint-initdb.d
+          resources:
+            {{- toYaml .Values.postgres.resources | nindent 12 }}
           readinessProbe:
             exec:
               command:

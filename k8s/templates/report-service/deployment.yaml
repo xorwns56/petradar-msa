@@ -30,6 +30,19 @@ spec:
                 secretKeyRef:
                   name: db-secret
                   key: spring-datasource-password
+            # MinIO 인증 정보 (이미지 업로드/조회에 필요)
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: minio-access-key
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: minio-secret-key
+          resources:
+            {{- toYaml .Values.reportService.resources | nindent 12 }}
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness

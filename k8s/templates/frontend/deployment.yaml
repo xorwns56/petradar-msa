@@ -25,6 +25,8 @@ spec:
           env:
             - name: NODE_ENV
               value: "production"
+          resources:
+            {{- toYaml .Values.frontend.resources | nindent 12 }}
           readinessProbe:
             httpGet:
               path: /

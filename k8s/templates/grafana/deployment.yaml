@@ -42,6 +42,8 @@ spec:
             # 대시보드 JSON 파일
             - name: dashboards
               mountPath: /var/lib/grafana/dashboards
+          resources:
+            {{- toYaml .Values.grafana.resources | nindent 12 }}
           readinessProbe:
             httpGet:
               path: /api/health

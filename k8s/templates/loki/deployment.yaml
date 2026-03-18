@@ -31,6 +31,8 @@ spec:
             - name: config
               mountPath: /etc/loki/loki-config.yml
               subPath: loki-config.yml
+          resources:
+            {{- toYaml .Values.loki.resources | nindent 12 }}
           readinessProbe:
             httpGet:
               path: /ready
