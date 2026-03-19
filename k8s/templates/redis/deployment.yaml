@@ -1,5 +1,10 @@
+# ===========================================
+# Redis StatefulSet
+# Refresh Token + WebSocket Pub/Sub
+# PVC로 데이터 영속성 보장 (Pod 재시작 시 데이터 유지)
+# ===========================================
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: redis
   namespace: {{ .Release.Namespace }}
@@ -7,6 +12,7 @@ metadata:
     {{- include "petradar.labels" . | nindent 4 }}
     app: redis
 spec:
+  serviceName: redis
   replicas: 1
   selector:
     matchLabels:
@@ -21,6 +27,9 @@ spec:
           image: {{ .Values.redis.image }}
           ports:
             - containerPort: {{ .Values.redis.port }}
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data  # Redis 기본 데이터 디렉토리 (RDB/AOF 저장 경로)
           resources:
             {{- toYaml .Values.redis.resources | nindent 12 }}
           readinessProbe:
@@ -30,3 +39,11 @@ spec:
                 - ping
             initialDelaySeconds: 5
             periodSeconds: 5
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
