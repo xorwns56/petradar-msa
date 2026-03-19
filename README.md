@@ -130,7 +130,9 @@ petradar-msa/
 │   └── promtail/             # Promtail 설정
 ├── argocd/                   # ArgoCD Application 매니페스트
 ├── .github/workflows/        # GitHub Actions CI
-└── docker-compose.yml        # 로컬 인프라 (PostgreSQL, Redis, Kafka, MinIO, 모니터링)
+├── docker-compose.yml        # 로컬 인프라 (PostgreSQL, Redis, Kafka, MinIO, 모니터링)
+├── start-dev.sh              # 로컬 전체 일괄 실행
+└── stop-dev.sh               # 로컬 전체 일괄 종료
 ```
 
 ---
@@ -144,54 +146,46 @@ petradar-msa/
 - Node.js 18+
 - Docker & Docker Compose
 
-### 1. 인프라 실행 (Docker Compose)
+### 일괄 실행 (권장)
 
 ```bash
-# PostgreSQL, Redis, Kafka, MinIO, 모니터링 스택 실행
-docker-compose up -d
+# 인프라 + 백엔드 + 프론트엔드 전체 실행
+./start-dev.sh
+
+# 전체 종료
+./stop-dev.sh
 ```
 
-| 서비스 | 접속 URL | 계정 |
+인프라 헬스체크 통과 후 애플리케이션을 실행하며, 하나라도 실패 시 전체 종료됩니다.
+
+### 개별 실행
+
+```bash
+# 1. 인프라 실행 (PostgreSQL, Redis, Kafka, MinIO, 모니터링)
+docker compose up -d
+
+# 2. 백엔드 서비스 (각각 별도 터미널)
+./gradlew bootRun -p backend/gateway-service
+./gradlew bootRun -p backend/user-service
+./gradlew bootRun -p backend/report-service
+cd backend/search-service && uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+# 3. 프론트엔드
+cd frontend && npm install && npm run dev
+```
+
+### 접속 정보
+
+| 서비스 | URL | 계정 |
 |---|---|---|
-| MinIO 콘솔 | http://localhost:9001 | minioadmin / minioadmin |
+| Frontend | http://localhost:3000 | - |
+| Gateway | http://localhost:8080 | - |
+| Swagger (User) | http://localhost:8081/swagger-ui.html | - |
+| Swagger (Report) | http://localhost:8082/swagger-ui.html | - |
 | Grafana | http://localhost:3000 | admin / admin |
 | Prometheus | http://localhost:9090 | - |
-
-### 2. 백엔드 서비스 실행
-
-```bash
-# Gateway Service
-cd backend/gateway-service
-./gradlew bootRun
-
-# User Service
-cd backend/user-service
-./gradlew bootRun
-
-# Report Service
-cd backend/report-service
-./gradlew bootRun
-
-# Search Service (Python)
-cd backend/search-service
-pip install -r requirements.txt
-uvicorn main:app --host 0.0.0.0 --port 8000
-```
-
-### 3. 프론트엔드 실행
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-### 4. API 문서 확인 (Swagger UI)
-
-| 서비스 | Swagger UI |
-|---|---|
-| User Service | http://localhost:8081/swagger-ui.html |
-| Report Service | http://localhost:8082/swagger-ui.html |
+| MinIO 콘솔 | http://localhost:9001 | minioadmin / minioadmin |
+| Zipkin | http://localhost:9411 | - |
 
 ---
 
