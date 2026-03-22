@@ -178,7 +178,7 @@ cd frontend && npm install && npm run dev
 
 | 서비스 | URL | 계정 |
 |---|---|---|
-| Frontend | http://localhost:3000 | - |
+| Frontend | http://localhost:5173 | - |
 | Gateway | http://localhost:8080 | - |
 | Swagger (User) | http://localhost:8081/swagger-ui.html | - |
 | Swagger (Report) | http://localhost:8082/swagger-ui.html | - |
