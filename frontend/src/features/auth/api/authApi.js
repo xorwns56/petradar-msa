@@ -5,7 +5,7 @@ import api from "@/shared/api/apiInstance";
 export const useLogin = () => {
   return useMutation({
     mutationFn: async ({ id, pw }) => {
-      const response = await api.post("/api/auth/login", { id, pw });
+      const response = await api.post("/api/auth/login", { loginId: id, pw });
       return response.data;
     },
   });
@@ -15,7 +15,7 @@ export const useLogin = () => {
 export const useRegister = () => {
   return useMutation({
     mutationFn: async ({ id, pw, hp }) => {
-      const response = await api.post("/api/auth/register", { id, pw, hp });
+      const response = await api.post("/api/auth/register", { loginId: id, pw, hp });
       return response.data;
     },
   });
@@ -26,7 +26,7 @@ export const useCheckExist = () => {
   return useMutation({
     mutationFn: async (id) => {
       const response = await api.get("/api/auth/check-exist", {
-        params: { id },
+        params: { loginId: id },
       });
       return response.data;
     },

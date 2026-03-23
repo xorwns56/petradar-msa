@@ -17,7 +17,7 @@ const RegisterPage = () => {
 
   const isExist = async (id) => {
     try {
-      const response = await api.get("/api/auth/check-exist", { params : {id} });
+      const response = await api.get("/api/auth/check-exist", { params : { loginId: id } });
       return response.data;
     } catch (error) {
       console.error("isExist : ", error);
@@ -27,7 +27,7 @@ const RegisterPage = () => {
 
   const onRegister = async (id, pw, hp) => {
     try {
-      await api.post("/api/auth/register", { id, pw, hp });
+      await api.post("/api/auth/register", { loginId: id, pw, hp });
       nav("/login", { replace: true });
     } catch (error) {
         console.error("onRegister : ", error);

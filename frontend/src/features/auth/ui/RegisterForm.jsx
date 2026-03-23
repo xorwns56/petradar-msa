@@ -6,10 +6,11 @@ const RegisterForm = ({ isExist, onRegister }) => {
     const idRegex = /^[a-z0-9]*$/;
     if (!input.id) {
       newErrMsg.id = "아이디를 입력해주세요.";
+    } else if (!idRegex.test(input.id)) {
+      // 형식 검증을 먼저 수행 (불필요한 API 호출 방지)
+      newErrMsg.id = "ID는 영문 소문자와 숫자만 입력 가능합니다.";
     } else if (await isExist(input.id)) {
       newErrMsg.id = "사용할 수 없는 아이디입니다. 다른 아이디를 입력해주세요.";
-    } else if (!idRegex.test(input.id)) {
-      newErrMsg.id = "ID는 영문 소문자와 숫자만 입력 가능합니다.";
     }
     const pwRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
     if (!input.pw) {

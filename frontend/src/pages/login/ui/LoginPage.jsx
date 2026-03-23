@@ -16,7 +16,7 @@ const LoginPage = () => {
   */
   const isExist = async (id) => {
       try {
-        const response = await api.get("/api/auth/check-exist", { params : {id} });
+        const response = await api.get("/api/auth/check-exist", { params : { loginId: id } });
         return response.data;
       } catch (error) {
         console.error("isExist : ", error);
@@ -26,7 +26,7 @@ const LoginPage = () => {
   const onLogin = async (id, pw) => {
     try {
       const response = await api.post("/api/auth/login", {
-        id,
+        loginId: id,
         pw,
       });
       if (response.status === 200) {
