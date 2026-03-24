@@ -1,3 +1,4 @@
+import logging
 from fastapi import APIRouter, Depends, File, Form, UploadFile, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import text
@@ -6,6 +7,8 @@ from models import MissingEmbedding
 from schemas import SearchResponse, SearchResult, TextSearchRequest
 from clip_model import get_image_vector, get_text_vector
 from typing import Optional
+
+logger = logging.getLogger(__name__)
 
 # APIRouter: Spring의 @RestController와 유사
 # prefix="/api/search"를 붙이면 모든 엔드포인트 앞에 자동으로 붙음
@@ -36,6 +39,7 @@ def index_missing(
         db.add(MissingEmbedding(missing_id=missing_id, image_vector=vector))
 
     db.commit()
+    logger.info("이미지 인덱싱 완료: missingId=%d", missing_id)
     return {"message": "indexed"}
 
 
@@ -49,6 +53,7 @@ def delete_index(missing_id: int, db: Session = Depends(get_db)):
         MissingEmbedding.missing_id == missing_id
     ).delete()
     db.commit()
+    logger.info("인덱스 삭제 완료: missingId=%d", missing_id)
     return {"message": "deleted"}
 
 
@@ -64,6 +69,7 @@ def search_by_image(
     """
     image_bytes = image.file.read()
     vector = get_image_vector(image_bytes)
+    logger.info("이미지 검색 요청: top_k=%d", top_k)
     return _search(vector, top_k, db)
 
 
@@ -74,6 +80,7 @@ def search_by_text(request: TextSearchRequest, db: Session = Depends(get_db)):
     "갈색 강아지" → CLIP 텍스트 인코더 → image_vector와 유사도 비교
     """
     vector = get_text_vector(request.query)
+    logger.info("텍스트 검색 요청: query='%s', top_k=%d", request.query, request.top_k)
     return _search(vector, request.top_k, db)
 
 

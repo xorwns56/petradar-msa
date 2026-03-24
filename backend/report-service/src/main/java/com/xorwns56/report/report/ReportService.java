@@ -4,11 +4,13 @@ import com.xorwns56.report.missing.Missing;
 import com.xorwns56.report.missing.MissingRepository;
 import com.xorwns56.report.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReportService {
@@ -50,6 +52,7 @@ public class ReportService {
                 .longitude(point != null ? point.getLng() : null)
                 .build();
         reportRepository.save(report);
+        log.info("목격 제보 등록 완료: reportId={}, missingId={}, userId={}", report.getId(), missingId, userId);
 
         // 실종 신고 작성자에게 알림 전송
         notificationService.sendToUser(userId, missing.getUserId(), "report", missingId);

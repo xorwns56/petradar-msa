@@ -35,8 +35,10 @@ public class MinioService {
                     .contentType(file.getContentType())
                     .build());
         } catch (Exception e) {
+            log.error("MinIO 업로드 실패: {}", e.getMessage());
             throw new RuntimeException("MinIO 업로드 실패: " + e.getMessage());
         }
+        log.info("MinIO 업로드 완료: {}", objectName);
         return endpoint + "/" + bucket + "/" + objectName;
     }
 

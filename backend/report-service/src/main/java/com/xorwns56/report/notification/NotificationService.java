@@ -3,12 +3,14 @@ package com.xorwns56.report.notification;
 import com.xorwns56.report.client.UserServiceClient;
 import com.xorwns56.report.websocket.RedisPublisher;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
@@ -27,6 +29,7 @@ public class NotificationService {
                 .postId(postId)
                 .build();
         notificationRepository.save(notification);
+        log.info("알림 전송: senderId={}, receiverId={}, postType={}, postId={}", senderId, receiverId, postType, postId);
 
         // Redis Pub/Sub으로 실시간 WebSocket 알림 발송
         redisPublisher.publish(NotificationDTO.WebSocketMessage.builder()
@@ -43,6 +46,7 @@ public class NotificationService {
     public void sendToAllUsers(Long senderId, String postType, Long postId) {
         // user-service에서 전체 유저 목록 조회
         List<UserServiceClient.UserResponse> allUsers = userServiceClient.getAllUsers();
+        log.info("전체 알림 발송 시작: senderId={}, 대상 {}명", senderId, allUsers.size() - 1);
 
         allUsers.stream()
                 .filter(user -> !user.id().equals(senderId)) // 작성자 본인 제외
@@ -63,8 +67,10 @@ public class NotificationService {
         Notification notification = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new IllegalArgumentException("알림을 찾을 수 없습니다."));
         if (!notification.getReceiverId().equals(userId)) {
+            log.warn("알림 삭제 실패 - 권한 없음: notificationId={}, userId={}", notificationId, userId);
             throw new IllegalArgumentException("삭제 권한이 없습니다.");
         }
         notificationRepository.delete(notification);
+        log.info("알림 삭제 완료: notificationId={}, userId={}", notificationId, userId);
     }
 }

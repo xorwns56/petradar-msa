@@ -106,6 +106,7 @@ public class MissingService {
                 .petImage(imageUrl)
                 .build();
         missingRepository.save(missing);
+        log.info("실종 신고 등록 완료: missingId={}, userId={}, petName={}", missing.getId(), userId, request.getPetName());
 
         // 3. Kafka로 missing-created 이벤트 발행
         // search-service: CLIP 벡터화 후 pgvector 저장
@@ -133,6 +134,7 @@ public class MissingService {
         Missing missing = missingRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("실종 신고를 찾을 수 없습니다."));
         if (!missing.getUserId().equals(userId)) {
+            log.warn("실종 신고 수정 실패 - 권한 없음: missingId={}, userId={}", id, userId);
             throw new IllegalArgumentException("수정 권한이 없습니다.");
         }
         MissingDTO.Point point = request.getPetMissingPoint();
@@ -147,6 +149,7 @@ public class MissingService {
         missing.setLongitude(point != null ? point.getLng() : null);
         missing.setTitle(request.getTitle());
         missing.setContent(request.getContent());
+        log.info("실종 신고 수정 완료: missingId={}, userId={}", id, userId);
     }
 
     // 실종 신고 삭제
@@ -155,6 +158,7 @@ public class MissingService {
         Missing missing = missingRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("실종 신고를 찾을 수 없습니다."));
         if (!missing.getUserId().equals(userId)) {
+            log.warn("실종 신고 삭제 실패 - 권한 없음: missingId={}, userId={}", id, userId);
             throw new IllegalArgumentException("삭제 권한이 없습니다.");
         }
 
@@ -167,5 +171,6 @@ public class MissingService {
 
         // search-service에서 pgvector 임베딩 삭제
         kafkaTemplate.send(KAFKA_TOPIC_MISSING_DELETED, new MissingDeletedEvent(id));
+        log.info("실종 신고 삭제 완료: missingId={}, userId={}", id, userId);
     }
 }
