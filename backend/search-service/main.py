@@ -1,6 +1,19 @@
+import logging
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+
+# 로그 파일 출력 설정 (Promtail이 수집)
+os.makedirs("logs", exist_ok=True)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s - %(message)s",
+    handlers=[
+        logging.StreamHandler(),                              # 콘솔 출력
+        logging.FileHandler("logs/search-service.log"),       # 파일 출력
+    ],
+)
 from faststream.kafka import KafkaBroker
 from prometheus_fastapi_instrumentator import Instrumentator
 

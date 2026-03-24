@@ -1,6 +1,6 @@
 # ===========================================
 # Promtail 설정 파일
-# Docker 컨테이너 로그를 수집하여 Loki로 전송
+# Docker 컨테이너 로그 + 앱 서비스 로그 파일 수집
 # ===========================================
 
 server:
@@ -26,3 +26,26 @@ scrape_configs:
       # Docker Compose 서비스 이름을 라벨로 추가
       - source_labels: ['__meta_docker_container_label_com_docker_compose_service']
         target_label: 'service'
+
+  # -----------------------------------------
+  # 앱 서비스 로그 파일 수집
+  # 호스트에서 직접 실행되는 서비스의 로그를 파일로 수집
+  # -----------------------------------------
+  - job_name: app-services
+    static_configs:
+      - targets: [localhost]
+        labels:
+          service: gateway-service
+          __path__: /var/log/petradar/gateway-service/*.log
+      - targets: [localhost]
+        labels:
+          service: user-service
+          __path__: /var/log/petradar/user-service/*.log
+      - targets: [localhost]
+        labels:
+          service: report-service
+          __path__: /var/log/petradar/report-service/*.log
+      - targets: [localhost]
+        labels:
+          service: search-service
+          __path__: /var/log/petradar/search-service/*.log

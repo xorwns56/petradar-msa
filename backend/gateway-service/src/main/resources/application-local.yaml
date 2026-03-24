@@ -25,6 +25,16 @@ spring:
           predicates:
             - Path=/api/search/**
 
+# 로그 파일 출력 설정 (Promtail이 수집)
+logging:
+  file:
+    path: ./logs
+    name: ./logs/gateway-service.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 3
+
 # JWT 설정 (user-service와 동일한 시크릿 키 사용)
 jwt:
   secret: petradar-secret-key-must-be-at-least-256-bits-long-for-hs256

@@ -140,6 +140,10 @@ services:
     volumes:
       - ./docker/promtail/promtail-config.yml:/etc/promtail/config.yml  # Promtail 설정
       - /var/run/docker.sock:/var/run/docker.sock                        # Docker 소켓 (컨테이너 로그 접근)
+      - ./backend/gateway-service/logs:/var/log/petradar/gateway-service    # Gateway 로그
+      - ./backend/user-service/logs:/var/log/petradar/user-service          # User Service 로그
+      - ./backend/report-service/logs:/var/log/petradar/report-service      # Report Service 로그
+      - ./backend/search-service/logs:/var/log/petradar/search-service      # Search Service 로그
     command: -config.file=/etc/promtail/config.yml
     depends_on:
       - loki
