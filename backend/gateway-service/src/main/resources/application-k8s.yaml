@@ -20,6 +20,13 @@ spring:
           predicates:
             - Path=/api/search/**
 
+        # report-service WebSocket: 실시간 알림 (SockJS + STOMP)
+        # SockJS는 HTTP 핸드셰이크(/api/ws/info) 후 WebSocket 업그레이드하므로 http:// 사용
+        - id: report-service-ws
+          uri: http://report-service:8080
+          predicates:
+            - Path=/api/ws/**
+
 # JWT 설정 (user-service와 동일한 시크릿 키 사용)
 jwt:
   secret: ${JWT_SECRET}

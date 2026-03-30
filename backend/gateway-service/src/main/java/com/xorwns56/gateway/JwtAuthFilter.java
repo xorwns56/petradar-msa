@@ -43,6 +43,24 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
 
+        // WebSocket 연결: 쿼리 파라미터에서 토큰 추출 (SockJS는 Authorization 헤더 사용 불가)
+        if (path.startsWith("/api/ws")) {
+            String tokenParam = exchange.getRequest().getQueryParams().getFirst("token");
+            if (tokenParam != null && tokenParam.startsWith("Bearer ")) {
+                String wsToken = tokenParam.substring(7);
+                if (jwtTokenProvider.validateToken(wsToken)) {
+                    String userId = jwtTokenProvider.getUserId(wsToken);
+                    ServerWebExchange wsExchange = exchange.mutate()
+                            .request(exchange.getRequest().mutate()
+                                    .header("X-User-Id", userId)
+                                    .build())
+                            .build();
+                    return chain.filter(wsExchange);
+                }
+            }
+            return unauthorized(exchange);
+        }
+
         // Authorization 헤더에서 토큰 추출
         String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 
@@ -56,8 +74,11 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
 
         String token = authHeader.substring(7); // "Bearer " 제거
 
-        // 토큰 유효성 검증
+        // 토큰 유효성 검증 실패 시, optional 경로는 비회원으로 통과
         if (!jwtTokenProvider.validateToken(token)) {
+            if (isOptionalAuthPath(path)) {
+                return chain.filter(exchange);
+            }
             return unauthorized(exchange);
         }
 
@@ -73,7 +94,12 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
     }
 
     // 비회원도 접근 가능한 경로 (목격 제보, 실종 신고 조회 등)
+    // /me 등 로그인 필수 경로는 제외해야 토큰 만료 시 401 → 자동 재발급 흐름이 정상 동작
     private boolean isOptionalAuthPath(String path) {
+        // 로그인 필수 경로는 optional에서 제외
+        if (path.equals("/api/missing/me") || path.equals("/api/notification/me")) {
+            return false;
+        }
         return path.startsWith("/api/missing") ||
                path.startsWith("/api/report") ||
                path.startsWith("/api/search");

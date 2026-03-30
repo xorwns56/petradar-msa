@@ -25,6 +25,13 @@ spring:
           predicates:
             - Path=/api/search/**
 
+        # report-service WebSocket: 실시간 알림 (SockJS + STOMP)
+        # SockJS는 HTTP 핸드셰이크(/api/ws/info) 후 WebSocket 업그레이드하므로 http:// 사용
+        - id: report-service-ws
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/ws/**
+
 # 로그 파일 출력 설정 (Promtail이 수집)
 logging:
   file:
