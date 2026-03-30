@@ -12,7 +12,3 @@ class MissingEmbedding(Base):
 
     # 반려동물 사진으로 생성한 벡터 (이미지 없으면 null)
     image_vector = Column(Vector(512), nullable=True)
-
-    # 반려동물 설명 텍스트로 생성한 벡터 (항상 존재)
-    # 텍스트 검색 + 이미지 검색 모두에 활용 가능 (CLIP 크로스 모달)
-    text_vector = Column(Vector(512), nullable=True)

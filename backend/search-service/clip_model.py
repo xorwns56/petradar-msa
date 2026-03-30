@@ -26,16 +26,3 @@ def get_image_vector(image_bytes: bytes) -> list[float]:
 
     return image_features[0].tolist()
 
-def get_text_vector(text: str) -> list[float]:
-    """
-    텍스트 → CLIP 텍스트 인코더 → 512차원 벡터 반환
-    이미지와 같은 벡터 공간에 있어 크로스 모달 검색 가능
-    ex) "갈색 강아지" → 갈색 강아지 이미지와 유사한 벡터 생성
-    """
-    inputs = processor(text=[text], return_tensors="pt", padding=True, truncation=True)
-
-    with torch.no_grad():
-        text_features = model.get_text_features(**inputs)
-        text_features = text_features / text_features.norm(dim=-1, keepdim=True)
-
-    return text_features[0].tolist()

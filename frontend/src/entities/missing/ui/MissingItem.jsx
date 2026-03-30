@@ -36,6 +36,10 @@ const MissingItem = ({ missingDTO, onClick, toggleModal, myMissing }) => {
         <p className="contents-t2">{missingDTO.title}</p>
         <p>{missingDTO.petAge}(년생)</p>
         <p>실종일자 : {missingDTO.petMissingDate}</p>
+        {/* AI 검색 시에만 유사도 표시 */}
+        {missingDTO.similarity != null && (
+          <p className="similarity">유사도 : {Math.round(missingDTO.similarity * 100)}%</p>
+        )}
       </div>
       <div className="ReportMove-btn">
         {!myMissing && (

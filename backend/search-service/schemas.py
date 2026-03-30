@@ -12,8 +12,3 @@ class SearchResult(BaseModel):
 # 검색 응답
 class SearchResponse(BaseModel):
     results: List[SearchResult]
-
-# 텍스트 검색 요청
-class TextSearchRequest(BaseModel):
-    query: str       # 검색어 ex) "갈색 털 작은 강아지"
-    top_k: int = 5  # 상위 몇 개 반환할지 (기본값 5)

@@ -4,9 +4,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 from database import get_db
 from models import MissingEmbedding
-from schemas import SearchResponse, SearchResult, TextSearchRequest
-from clip_model import get_image_vector, get_text_vector
-from typing import Optional
+from schemas import SearchResponse, SearchResult
+from clip_model import get_image_vector
 
 logger = logging.getLogger(__name__)
 
@@ -73,44 +72,51 @@ def search_by_image(
     return _search(vector, top_k, db)
 
 
-@router.post("/text", response_model=SearchResponse)
-def search_by_text(request: TextSearchRequest, db: Session = Depends(get_db)):
+SIMILARITY_THRESHOLD = 0.75  # 최소 유사도 임계값 (CLIP 이미지-이미지 기준, 같은 종 + 유사 외형)
+
+# CLIP 이미지-이미지 코사인 유사도 정규화 범위
+# CLIP 벡터는 0.5~1.0 범위에 밀집되어 raw 값을 그대로 퍼센트로 보여주면 왜곡됨
+# 예: raw 0.82(고양이↔강아지)가 82%로 표시 → 정규화 후 약 23%로 보정
+SIMILARITY_MIN = 0.7   # 이 이하는 0%로 취급
+SIMILARITY_MAX = 1.0   # 이 값이 100%
+
+
+def _normalize_similarity(raw: float) -> float:
     """
-    텍스트로 유사 실종 동물 검색 (크로스 모달)
-    "갈색 강아지" → CLIP 텍스트 인코더 → image_vector와 유사도 비교
+    CLIP raw 코사인 유사도를 체감 유사도(0~1)로 정규화
+    min-max 스케일링으로 SIMILARITY_MIN~SIMILARITY_MAX → 0.0~1.0 매핑
     """
-    vector = get_text_vector(request.query)
-    logger.info("텍스트 검색 요청: query='%s', top_k=%d", request.query, request.top_k)
-    return _search(vector, request.top_k, db)
+    normalized = (raw - SIMILARITY_MIN) / (SIMILARITY_MAX - SIMILARITY_MIN)
+    return max(0.0, min(1.0, normalized))
 
 
 def _search(vector: list[float], top_k: int, db: Session) -> SearchResponse:
     """
-    pgvector 코사인 유사도 검색
-    image_vector와 text_vector 모두 비교 후 더 유사한 값을 similarity로 사용
-    이미지/텍스트 어느 쪽으로 검색해도 두 벡터를 모두 활용해 더 좋은 결과 반환
+    pgvector 코사인 유사도 검색 (image_vector 기반)
+    CLIP 이미지 인코더로 생성된 벡터 간 코사인 유사도 비교
+    threshold 이상인 결과만 반환하고, 체감 유사도로 정규화하여 응답
     """
     results = db.execute(
         text("""
             SELECT missing_id,
-                   GREATEST(
-                       CASE WHEN image_vector IS NOT NULL
-                            THEN 1 - (image_vector <=> CAST(:vector AS vector))
-                            ELSE 0 END,
-                       CASE WHEN text_vector IS NOT NULL
-                            THEN 1 - (text_vector <=> CAST(:vector AS vector))
-                            ELSE 0 END
-                   ) AS similarity
+                   1 - (image_vector <=> CAST(:vector AS vector)) AS similarity
             FROM missing_embedding
+            WHERE image_vector IS NOT NULL
+              AND 1 - (image_vector <=> CAST(:vector AS vector)) >= :threshold
             ORDER BY similarity DESC
             LIMIT :top_k
         """),
-        {"vector": str(vector), "top_k": top_k}
+        {"vector": str(vector), "top_k": top_k, "threshold": SIMILARITY_THRESHOLD}
     ).fetchall()
 
+    logger.info("검색 결과: %d건 (threshold=%.2f)", len(results), SIMILARITY_THRESHOLD)
     return SearchResponse(
         results=[
-            SearchResult(missing_id=row.missing_id, similarity=round(row.similarity, 4))
+            SearchResult(
+                missing_id=row.missing_id,
+                # raw 유사도를 체감 유사도로 정규화하여 반환
+                similarity=round(_normalize_similarity(row.similarity), 4)
+            )
             for row in results
         ]
     )

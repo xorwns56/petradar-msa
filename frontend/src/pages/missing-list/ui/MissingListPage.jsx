@@ -16,7 +16,7 @@ const MissingListPage = () => {
   const nav = useNavigate();
   const userId = getUserId();
 
-  // 검색 타입: title(제목 검색), text(AI 텍스트 검색), image(AI 이미지 검색)
+  // 검색 타입: title(제목 검색), image(AI 이미지 검색)
   const [searchType, setSearchType] = useState("title");
   const [sortType, setSortType] = useState("latest");
   const [searchInput, setSearchInput] = useState("");
@@ -61,38 +61,6 @@ const MissingListPage = () => {
     }
   };
 
-  // AI 텍스트 검색 (search-service → report-service batch, 클라이언트 페이징)
-  const fetchByText = async () => {
-    if (!searchInput.trim()) {
-      alert("검색어를 입력해주세요.");
-      return;
-    }
-    try {
-      // 1단계: search-service에서 유사도 검색
-      const searchResponse = await api.post("/api/search/text", {
-        query: searchInput,
-        top_k: 50,
-      });
-      const results = searchResponse.data.results;
-      if (results.length === 0) {
-        setAllResults([]);
-        setMissingList([]);
-        setTotalItems(0);
-        return;
-      }
-
-      // 2단계: report-service에서 실제 데이터 조회 (유사도 순서 유지)
-      const ids = results.map((r) => r.missing_id);
-      const batchData = await fetchMissingBatch(ids);
-      // 전체 결과 저장 → useEffect에서 페이지별로 슬라이싱
-      setAllResults(batchData);
-      setTotalItems(batchData.length);
-    } catch (error) {
-      console.error("Failed to search by text:", error);
-      alert("AI 텍스트 검색에 실패했습니다.");
-    }
-  };
-
   // AI 이미지 검색 (search-service → report-service batch, 클라이언트 페이징)
   const fetchByImage = async () => {
     if (!imageFile) {
@@ -118,9 +86,17 @@ const MissingListPage = () => {
       // 2단계: report-service에서 실제 데이터 조회 (유사도 순서 유지)
       const ids = results.map((r) => r.missing_id);
       const batchData = await fetchMissingBatch(ids);
+      // 유사도 정보를 실제 데이터에 병합
+      const similarityMap = Object.fromEntries(
+        results.map((r) => [r.missing_id, r.similarity])
+      );
+      const merged = batchData.map((item) => ({
+        ...item,
+        similarity: similarityMap[item.id],
+      }));
       // 전체 결과 저장 → useEffect에서 페이지별로 슬라이싱
-      setAllResults(batchData);
-      setTotalItems(batchData.length);
+      setAllResults(merged);
+      setTotalItems(merged.length);
     } catch (error) {
       console.error("Failed to search by image:", error);
       alert("AI 이미지 검색에 실패했습니다.");
@@ -131,7 +107,6 @@ const MissingListPage = () => {
   const onSearch = () => {
     setPage(1);
     if (searchType === "title") fetchByTitle(1);
-    else if (searchType === "text") fetchByText();
     else if (searchType === "image") fetchByImage();
   };
 
@@ -202,7 +177,6 @@ const MissingListPage = () => {
           {/* 검색 타입 선택 */}
           <select value={searchType} onChange={onChangeSearchType}>
             <option value={"title"}>제목 검색</option>
-            <option value={"text"}>AI 텍스트 검색</option>
             <option value={"image"}>AI 이미지 검색</option>
           </select>
           {/* 검색 타입에 따른 입력 필드 */}
@@ -218,11 +192,7 @@ const MissingListPage = () => {
               value={searchInput}
               onChange={onChangeInput}
               onKeyDown={onKeyDown}
-              placeholder={
-                searchType === "title"
-                  ? "검색할 제목을 입력하세요."
-                  : "예: 갈색 털 작은 강아지"
-              }
+              placeholder="검색할 제목을 입력하세요."
             />
           )}
           <Button text={"조회"} type={"Square"} onClick={onSearch} />
