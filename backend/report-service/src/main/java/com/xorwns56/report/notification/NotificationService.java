@@ -53,12 +53,29 @@ public class NotificationService {
                 .forEach(user -> sendToUser(senderId, user.id(), postType, postId));
     }
 
-    // 내 알림 목록 조회
+    // 내 알림 목록 조회 (senderId/receiverId → loginId 변환 포함)
     @Transactional(readOnly = true)
     public List<NotificationDTO.Response> getMyNotifications(Long userId) {
+        // receiver(본인)의 loginId 한 번만 조회
+        String receiverLoginId = resolveLoginId(userId);
+
         return notificationRepository.findByReceiverIdOrderByCreatedAtDesc(userId).stream()
-                .map(NotificationDTO.Response::from)
+                .map(notification -> {
+                    String senderLoginId = resolveLoginId(notification.getSenderId());
+                    return NotificationDTO.Response.from(notification, senderLoginId, receiverLoginId);
+                })
                 .collect(Collectors.toList());
+    }
+
+    // user-service에서 loginId 조회 (실패 시 null 반환)
+    private String resolveLoginId(Long userId) {
+        if (userId == null) return null;
+        try {
+            return userServiceClient.getUser(userId).loginId();
+        } catch (Exception e) {
+            log.warn("loginId 조회 실패: userId={}", userId);
+            return null;
+        }
     }
 
     // 알림 삭제
