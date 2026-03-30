@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -37,16 +38,18 @@ public class ReportController {
     }
 
     // 목격 제보 등록 (비회원도 가능 - X-User-Id 없을 수 있음)
-    @Operation(summary = "목격 제보 등록", description = "비회원도 가능 (X-User-Id 헤더 선택)")
+    // multipart: request(JSON) + image(File) — MissingController.create와 동일한 패턴
+    @Operation(summary = "목격 제보 등록", description = "multipart: request(JSON) + image(File), 비회원도 가능")
     @PostMapping("/missing/{missingId}")
     public ResponseEntity<?> create(
             @PathVariable Long missingId,
             @RequestHeader(value = "X-User-Id", required = false) Long userId,
-            @Valid @RequestBody ReportDTO.Request request) {
+            @Valid @RequestPart ReportDTO.Request request,
+            @RequestPart(required = false) MultipartFile image) {
         try {
-            reportService.create(userId, missingId, request);
+            reportService.create(userId, missingId, request, image);
             return ResponseEntity.ok().build();
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }

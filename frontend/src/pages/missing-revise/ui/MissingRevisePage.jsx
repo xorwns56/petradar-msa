@@ -75,12 +75,11 @@ const MissingRevisePage = () => {
       return;
     }
     try {
-        const { petMissingPoint, ...restOfForm } = form;
-          const requestBody = {
-            ...restOfForm,
-            latitude: petMissingPoint?.lat || null,
-            longitude: petMissingPoint?.lng || null,
-          };
+        // petImage가 File 객체면 제외 (PATCH는 JSON만 전송, 이미지 변경은 미지원)
+        const { petImage, ...rest } = form;
+        const requestBody = typeof petImage === "string"
+          ? { ...rest, petImage }
+          : rest;
         await updateMissing.mutateAsync({
           id: params.petMissingId,
           requestBody,
@@ -96,24 +95,16 @@ const MissingRevisePage = () => {
     if (name === "petType") {
       setForm({ ...form, petBreed: "" });
     }
+    // 이미지는 File 객체를 state에 저장
     if (name === "petImage" && files?.[0]) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        console.log(reader.result);
-        setForm((prev) => ({
-          ...prev,
-          [name]: reader.result,
-        }));
-      };
-      reader.readAsDataURL(files[0]);
+      setForm((prev) => ({ ...prev, petImage: files[0] }));
+      return;
     }
 
-    if (name !== "petImage") {
-      setForm((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const onLocationSelect = (latlng) => {

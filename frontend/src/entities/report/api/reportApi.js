@@ -15,14 +15,15 @@ export const useGetReports = (missingId, params) => {
   });
 };
 
-// 제보 등록
+// 제보 등록 (multipart/form-data: request(JSON) + image(File))
 export const useCreateReport = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ missingId, requestBody }) => {
+    mutationFn: async ({ missingId, formData }) => {
+      // Content-Type 헤더를 지정하지 않아야 axios가 boundary 포함하여 자동 설정
       const response = await api.post(
         `/api/report/missing/${missingId}`,
-        requestBody
+        formData
       );
       return response.data;
     },

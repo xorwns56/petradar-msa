@@ -20,15 +20,20 @@ const MissingReportPage = () => {
   });
   const onSubmitButtonClick = async () => {
       try {
-          const { petReportPoint, ...restOfForm } = form;
-          const requestBody = {
-            ...restOfForm,
-            latitude: petReportPoint ? petReportPoint.lat : null,
-            longitude: petReportPoint ? petReportPoint.lng : null,
-          };
+          const { petImage, ...requestData } = form;
+
+          // multipart/form-data로 전송 (백엔드가 @RequestPart로 수신)
+          const formData = new FormData();
+          formData.append("request", new Blob([JSON.stringify(requestData)], { type: "application/json" }));
+
+          // state에 저장된 File 객체 첨부
+          if (petImage) {
+            formData.append("image", petImage);
+          }
+
           await createReport.mutateAsync({
             missingId: params.petMissingId,
-            requestBody,
+            formData,
           });
           nav("/missingList");
       } catch (error) {
@@ -38,22 +43,16 @@ const MissingReportPage = () => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (name === "petImage") {
-      if (!files[0]) return;
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setForm((prev) => ({
-          ...prev,
-          [name]: reader.result,
-        }));
-      };
-      reader.readAsDataURL(files[0]);
-    } else {
-      setForm((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+    // 이미지는 File 객체를 state에 저장 (제출 시 FormData로 전송)
+    if (name === "petImage" && files?.[0]) {
+      setForm((prev) => ({ ...prev, petImage: files[0] }));
+      return;
     }
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
   const onLocationSelect = (latlng) => {
     setForm((prev) => ({

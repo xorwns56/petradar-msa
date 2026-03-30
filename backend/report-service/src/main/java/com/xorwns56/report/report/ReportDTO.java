@@ -45,7 +45,7 @@ public class ReportDTO {
         private String title;
         @NotBlank(message = "내용을 입력해주세요.")
         private String content;
-        private String petImage;
+        // petImage는 MultipartFile로 별도 수신 → MinIO 업로드 후 URL 저장
         private String petReportPlace;
         private Point petReportPoint;
     }
