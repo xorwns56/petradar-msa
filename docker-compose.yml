@@ -54,6 +54,23 @@ services:
     volumes:
       - minio-data:/data
 
+  # MinIO 초기화: 버킷 생성 + 공개 읽기 정책 설정
+  # 이미지는 정적 파일이므로 게이트웨이 없이 브라우저에서 직접 접근
+  minio-init:
+    image: minio/mc:latest
+    container_name: minio-init
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      sleep 3;
+      mc alias set local http://minio:9000 minioadmin minioadmin;
+      mc mb --ignore-existing local/pet-images;
+      mc anonymous set download local/pet-images;
+      echo 'MinIO 초기화 완료';
+      "
+    restart: "no"
+
   # ===========================================
   # Kafka - KRaft 모드 (Zookeeper 없이 실행)
   # Kafka 2.8.0+ 부터 지원하는 자체 메타데이터 관리 방식
