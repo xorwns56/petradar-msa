@@ -1,9 +1,11 @@
+import axios from "axios";
 import { create } from "zustand";
 import { jwtDecode } from "jwt-decode";
 
 // 인증 상태 관리 스토어
 export const useAuthStore = create((set) => ({
   isAuthenticated: !!sessionStorage.getItem("accessToken"),
+  isManualLogout: false, // 자발적 로그아웃 여부 (ProtectedRoute alert 제어용)
 
   // userId 추출 (토큰에서 디코딩)
   get userId() {
@@ -21,13 +23,18 @@ export const useAuthStore = create((set) => ({
   // 로그인 함수
   login: (token) => {
     sessionStorage.setItem("accessToken", token);
-    set({ isAuthenticated: true });
+    set({ isAuthenticated: true, isManualLogout: false });
   },
 
-  // 로그아웃 함수
-  logout: () => {
+  // 로그아웃 함수 — 서버에 logout 요청하여 Redis Refresh Token 삭제 + 쿠키 만료
+  logout: async (manual = true) => {
+    try {
+      await axios.post("/api/auth/logout", null, { withCredentials: true });
+    } catch (e) {
+      // 서버 요청 실패해도 로컬 로그아웃은 진행
+    }
     sessionStorage.removeItem("accessToken");
-    set({ isAuthenticated: false });
+    set({ isAuthenticated: false, isManualLogout: manual });
   },
 }));
 

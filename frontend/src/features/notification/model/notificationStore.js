@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import SockJS from "sockjs-client/dist/sockjs";
 import { Client } from "@stomp/stompjs";
+import { getUserId } from "@/features/auth/model/authStore";
 
 // 알림 + WebSocket 관리 스토어
 export const useNotificationStore = create((set, get) => ({
@@ -37,8 +38,11 @@ export const useNotificationStore = create((set, get) => ({
     if (socket) return; // 이미 연결됨
 
     const newSocket = new SockJS(`/api/ws?token=Bearer ${token}`);
+    const userId = getUserId();
     const stompClient = new Client({
       webSocketFactory: () => newSocket,
+      // STOMP CONNECT 시 X-User-Id 헤더 전송 → 서버에서 Principal로 설정
+      connectHeaders: { "X-User-Id": String(userId) },
       heartbeatIncoming: 10000,
       heartbeatOutgoing: 10000,
       reconnectDelay: 5000, // 끊겼을 때 자동 재연결
@@ -60,10 +64,11 @@ export const useNotificationStore = create((set, get) => ({
     stompClient.activate();
   },
 
-  // WebSocket 연결 해제
+  // WebSocket 연결 해제 (자동 재연결 비활성화 후 종료)
   disconnectSocket: () => {
     const { socket } = get();
     if (socket) {
+      socket.reconnectDelay = 0; // 재연결 방지
       socket.deactivate();
       set({ socket: null });
     }

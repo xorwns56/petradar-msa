@@ -30,7 +30,7 @@ api.interceptors.response.use(
       if (originalRequest.url === "/api/auth/reissue") {
         // Zustand는 React 외부에서도 접근 가능
         const { useAuthStore } = await import("@/features/auth/model/authStore");
-        useAuthStore.getState().logout();
+        useAuthStore.getState().logout(false); // 자동 로그아웃 (alert 표시)
         return Promise.reject(error);
       }
 
@@ -67,7 +67,7 @@ api.interceptors.response.use(
         reissueQueue.forEach((req) => req.reject(reissueError));
         reissueQueue = [];
         const { useAuthStore } = await import("@/features/auth/model/authStore");
-        useAuthStore.getState().logout();
+        useAuthStore.getState().logout(false); // 자동 로그아웃 (alert 표시)
         return Promise.reject(reissueError);
       } finally {
         isReissuing = false;

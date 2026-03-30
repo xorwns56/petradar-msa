@@ -8,11 +8,15 @@ import { useAuthStore } from "@/features/auth/model/authStore";
  */
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const isManualLogout = useAuthStore((s) => s.isManualLogout);
   const nav = useNavigate();
 
   useEffect(() => {
     if (!isAuthenticated) {
-      alert("로그인이 필요합니다.");
+      // 자발적 로그아웃이면 alert 없이 이동
+      if (!isManualLogout) {
+        alert("로그인이 필요합니다.");
+      }
       nav("/login", { replace: true });
     }
   }, [isAuthenticated, nav]);
