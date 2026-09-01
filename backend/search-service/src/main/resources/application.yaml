@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: search-service
+  profiles:
+    active: local
+  kafka:
+    consumer:
+      group-id: search-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.xorwns56.search.kafka"
+        # 프로듀서(report-service)가 실어 보내는 타입 헤더(FQCN)를 search-service 자기 클래스로 매핑
+        # (두 서비스의 이벤트 record 필드는 동일하나 패키지가 달라, 매핑 없이는 역직렬화 실패)
+        spring.json.type.mapping: "com.xorwns56.report.kafka.MissingCreatedEvent:com.xorwns56.search.kafka.MissingCreatedEvent,com.xorwns56.report.kafka.MissingDeletedEvent:com.xorwns56.search.kafka.MissingDeletedEvent"
+
+# SpringDoc Swagger UI 설정
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus  # prometheus 엔드포인트 노출
+  endpoint:
+    prometheus:
+      enabled: true  # /actuator/prometheus 활성화

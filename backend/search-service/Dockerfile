@@ -1,23 +1,20 @@
-FROM python:3.11-slim
-
-RUN groupadd -g 1001 appgroup && useradd -u 1001 -g appgroup --no-create-home appuser
-
+# Build Stage
+FROM eclipse-temurin:17-jdk-jammy AS builder
 WORKDIR /app
+COPY gradlew ./
+COPY gradle ./gradle/
+COPY build.gradle settings.gradle ./
+RUN chmod +x gradlew && ./gradlew dependencies --no-daemon || true
+COPY src ./src
+RUN ./gradlew bootJar --no-daemon -x test
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# CLIP 모델을 빌드 시점에 미리 다운로드
-# 컨테이너 시작 시마다 HuggingFace에서 다운로드하지 않도록 캐싱
-RUN python -c "from transformers import CLIPModel, CLIPProcessor; \
-    CLIPModel.from_pretrained('openai/clip-vit-base-patch32'); \
-    CLIPProcessor.from_pretrained('openai/clip-vit-base-patch32')"
-
-COPY . .
-
+# Runtime Stage
+FROM eclipse-temurin:17-jre-jammy
+RUN groupadd -g 1001 appgroup && useradd -u 1001 -g appgroup --no-create-home appuser
+WORKDIR /app
+COPY --from=builder /app/build/libs/*.jar app.jar
 RUN chown -R appuser:appgroup /app
 USER appuser
+EXPOSE 8080
 
-EXPOSE 8000
-
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-jar", "app.jar"]
