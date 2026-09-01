@@ -1,12 +1,11 @@
 services:
   # ===========================================
   # PostgreSQL - 서비스별 스키마 분리
-  # pgvector 확장 포함 이미지 사용 (이미지 유사도 검색)
   # 접속: localhost:5432
-  # 스키마: user_db / report_db / search_db
+  # 스키마: user_db / report_db
   # ===========================================
   postgres:
-    image: pgvector/pgvector:pg16
+    image: postgres:16-alpine
     container_name: postgres
     ports:
       - "5432:5432"                          # 호스트:컨테이너 포트 매핑
@@ -97,6 +96,29 @@ services:
       - kafka-data:/var/lib/kafka/data
 
   # ===========================================
+  # Elasticsearch - 실종동물 전문 검색 엔진
+  # nori 플러그인: 한국어 형태소 분석
+  # 접속: http://localhost:9200
+  # ===========================================
+  elasticsearch:
+    build:
+      context: ./docker/elasticsearch
+    container_name: elasticsearch
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node                   # 단일 노드 모드
+      - xpack.security.enabled=false                 # 로컬 개발용 보안 비활성화
+      - ES_JAVA_OPTS=-Xms256m -Xmx256m               # 메모리 제한 (로컬 개발용)
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # ===========================================
   # Prometheus - 메트릭 수집
   # 각 서비스의 /actuator/prometheus, /metrics 엔드포인트에서 메트릭 수집
   # 접속: http://localhost:9090
@@ -170,10 +192,11 @@ services:
 # docker volume ls 로 확인 가능
 # ===========================================
 volumes:
-  postgres-data:    # PostgreSQL 데이터 저장
-  redis-data:       # Redis 데이터 저장
-  kafka-data:       # Kafka 데이터 저장
-  minio-data:       # MinIO 이미지 저장
-  prometheus-data:  # Prometheus 메트릭 저장
-  grafana-data:     # Grafana 설정/대시보드 저장
-  loki-data:        # Loki 로그 저장
+  postgres-data:        # PostgreSQL 데이터 저장
+  redis-data:           # Redis 데이터 저장
+  kafka-data:           # Kafka 데이터 저장
+  minio-data:           # MinIO 이미지 저장
+  elasticsearch-data:   # Elasticsearch 인덱스 저장
+  prometheus-data:      # Prometheus 메트릭 저장
+  grafana-data:         # Grafana 설정/대시보드 저장
+  loki-data:            # Loki 로그 저장

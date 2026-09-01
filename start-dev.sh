@@ -42,6 +42,12 @@ until docker compose exec kafka kafka-topics --bootstrap-server localhost:9092 -
 done
 echo "Kafka 준비 완료"
 
+echo "Elasticsearch 준비 대기 중..."
+until curl -s http://localhost:9200/_cluster/health > /dev/null 2>&1; do
+  sleep 1
+done
+echo "Elasticsearch 준비 완료"
+
 echo "=== 인프라 준비 완료 ==="
 echo ""
 
@@ -53,9 +59,7 @@ echo "=== 백엔드 서비스 시작 ==="
 "$SCRIPT_DIR"/gradlew bootRun -p "$SCRIPT_DIR/backend/gateway-service" &
 "$SCRIPT_DIR"/gradlew bootRun -p "$SCRIPT_DIR/backend/user-service" &
 "$SCRIPT_DIR"/gradlew bootRun -p "$SCRIPT_DIR/backend/report-service" &
-
-# Python 가상환경의 uvicorn 직접 실행
-(cd "$SCRIPT_DIR/backend/search-service" && ./venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000 --reload) &
+"$SCRIPT_DIR"/gradlew bootRun -p "$SCRIPT_DIR/backend/search-service" &
 
 # -----------------------------------------
 # 3. 프론트엔드 실행
@@ -70,7 +74,7 @@ echo "  Frontend:       http://localhost:5173"
 echo "  Gateway:        http://localhost:8080"
 echo "  User Service:   http://localhost:8081"
 echo "  Report Service: http://localhost:8082"
-echo "  Search Service: http://localhost:8000"
+echo "  Search Service: http://localhost:8083"
 echo "  Grafana:        http://localhost:3000"
 echo "  MinIO Console:  http://localhost:9001"
 echo ""
