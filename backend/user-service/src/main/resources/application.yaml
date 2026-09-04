@@ -24,7 +24,4 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, info, prometheus
-  endpoint:
-    prometheus:
-      enabled: true
+        include: health, info  # health는 k8s 프로브에서 사용

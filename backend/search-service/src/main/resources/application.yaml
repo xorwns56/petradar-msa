@@ -26,7 +26,4 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, info, prometheus  # prometheus 엔드포인트 노출
-  endpoint:
-    prometheus:
-      enabled: true  # /actuator/prometheus 활성화
+        include: health, info  # health는 k8s 프로브에서 사용

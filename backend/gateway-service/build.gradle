@@ -39,11 +39,8 @@ dependencies {
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 
-	// Actuator + Prometheus + Zipkin
+	// Actuator - k8s 헬스 프로브용
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'io.micrometer:micrometer-registry-prometheus'  // Prometheus 메트릭 포맷으로 노출
-	implementation 'io.micrometer:micrometer-tracing-bridge-brave'  // 분산 추적 브릿지
-	implementation 'io.zipkin.reporter2:zipkin-reporter-brave'      // Zipkin으로 트레이스 전송
 
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'

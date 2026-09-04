@@ -41,11 +41,8 @@ dependencies {
 	// Kafka - missing-created/deleted 이벤트 수신
 	implementation 'org.springframework.kafka:spring-kafka'
 
-	// Actuator + Prometheus + Zipkin
+	// Actuator - k8s 헬스 프로브용
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'io.micrometer:micrometer-registry-prometheus'  // Prometheus 메트릭 포맷으로 노출
-	implementation 'io.micrometer:micrometer-tracing-bridge-brave'  // 분산 추적 브릿지
-	implementation 'io.zipkin.reporter2:zipkin-reporter-brave'      // Zipkin으로 트레이스 전송
 
 	// SpringDoc - Swagger UI + OpenAPI 3.0
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'

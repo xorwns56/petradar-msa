@@ -29,11 +29,3 @@ client:
     url: http://user-service
   search-service:
     url: http://search-service
-
-management:
-  tracing:
-    sampling:
-      probability: 0.1  # 프로덕션에서는 10%만 추적
-  zipkin:
-    tracing:
-      endpoint: http://zipkin:9411/api/v2/spans

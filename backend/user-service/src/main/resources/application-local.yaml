@@ -19,7 +19,7 @@ spring:
   kafka:
     bootstrap-servers: localhost:9092
 
-# 로그 파일 출력 설정 (Promtail이 수집)
+# 로그 파일 출력 설정
 logging:
   file:
     path: ./logs
@@ -31,11 +31,3 @@ logging:
 
 jwt:
   secret: petradar-secret-key-must-be-at-least-256-bits-long-for-hs256
-
-management:
-  tracing:
-    sampling:
-      probability: 1.0  # 로컬에서는 모든 요청 추적
-  zipkin:
-    tracing:
-      endpoint: http://localhost:9411/api/v2/spans

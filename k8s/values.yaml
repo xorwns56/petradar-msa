@@ -52,44 +52,6 @@ minio:
     requests: { cpu: 100m, memory: 128Mi }
     limits:   { cpu: 300m, memory: 256Mi }
 
-zipkin:
-  image: openzipkin/zipkin:3
-  port: 9411
-  resources:
-    requests: { cpu: 100m, memory: 128Mi }
-    limits:   { cpu: 300m, memory: 512Mi }
-
-# 모니터링 스택
-prometheus:
-  image: prom/prometheus:v2.51.0
-  port: 9090
-  retention: 7d  # 메트릭 보존 기간
-  resources:
-    requests: { cpu: 100m, memory: 256Mi }
-    limits:   { cpu: 300m, memory: 512Mi }
-
-grafana:
-  image: grafana/grafana:11.0.0
-  port: 3000
-  adminUser: admin
-  adminPassword: admin
-  resources:
-    requests: { cpu: 100m, memory: 128Mi }
-    limits:   { cpu: 300m, memory: 256Mi }
-
-loki:
-  image: grafana/loki:3.0.0
-  port: 3100
-  resources:
-    requests: { cpu: 100m, memory: 128Mi }
-    limits:   { cpu: 300m, memory: 256Mi }
-
-promtail:
-  image: grafana/promtail:3.0.0
-  resources:
-    requests: { cpu: 50m, memory: 64Mi }
-    limits:   { cpu: 100m, memory: 128Mi }
-
 # JWT 시크릿 - 배포 시 직접 주입 (git에 올리지 않음)
 # helm install petradar ./k8s --set jwtSecret="실제시크릿값"
 jwtSecret: ""
