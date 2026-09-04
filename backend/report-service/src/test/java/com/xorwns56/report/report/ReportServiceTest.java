@@ -131,12 +131,12 @@ class ReportServiceTest {
             // given
             given(missingRepository.findById(1L)).willReturn(Optional.of(testMissing));
             ReportDTO.Request request = new ReportDTO.Request(
-                    "여기서 봤어요", "공원에서 봤습니다", null, "서울시 강남구",
+                    "여기서 봤어요", "공원에서 봤습니다", "서울시 강남구",
                     new ReportDTO.Point(37.5, 127.04)
             );
 
-            // when
-            reportService.create(20L, 1L, request);
+            // when - 이미지는 별도 MultipartFile로 받으므로 없는 경우 null
+            reportService.create(20L, 1L, request, null);
 
             // then
             then(reportRepository).should().save(any(Report.class));
@@ -150,11 +150,11 @@ class ReportServiceTest {
             // given
             given(missingRepository.findById(1L)).willReturn(Optional.of(testMissing));
             ReportDTO.Request request = new ReportDTO.Request(
-                    "제보합니다", "비슷한 동물을 봤어요", null, "서울시 서초구", null
+                    "제보합니다", "비슷한 동물을 봤어요", "서울시 서초구", null
             );
 
             // when
-            reportService.create(null, 1L, request);
+            reportService.create(null, 1L, request, null);
 
             // then
             then(reportRepository).should().save(any(Report.class));
@@ -167,11 +167,11 @@ class ReportServiceTest {
             // given
             given(missingRepository.findById(999L)).willReturn(Optional.empty());
             ReportDTO.Request request = new ReportDTO.Request(
-                    "제보", "내용", null, "장소", null
+                    "제보", "내용", "장소", null
             );
 
             // when & then
-            assertThatThrownBy(() -> reportService.create(20L, 999L, request))
+            assertThatThrownBy(() -> reportService.create(20L, 999L, request, null))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("실종 신고를 찾을 수 없습니다.");
         }

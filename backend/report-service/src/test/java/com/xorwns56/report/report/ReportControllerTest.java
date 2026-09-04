@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -91,21 +92,48 @@ class ReportControllerTest {
     @DisplayName("POST /api/report/missing/{missingId}")
     class Create {
 
+        // request(JSON) 파트 생성 헬퍼 - 컨트롤러가 @RequestPart로 받으므로 JSON 파트로 전송
+        private MockMultipartFile requestPart(ReportDTO.Request request) throws Exception {
+            return new MockMultipartFile(
+                    "request", "", MediaType.APPLICATION_JSON_VALUE,
+                    objectMapper.writeValueAsBytes(request)
+            );
+        }
+
         @Test
         @DisplayName("회원 제보 등록")
         void create_withUser() throws Exception {
             // given
             ReportDTO.Request request = new ReportDTO.Request(
-                    "여기서 봤어요", "공원에서 봤습니다", null, "서울시 강남구",
+                    "여기서 봤어요", "공원에서 봤습니다", "서울시 강남구",
                     new ReportDTO.Point(37.5, 127.04)
             );
-            willDoNothing().given(reportService).create(eq(20L), eq(1L), any());
+            willDoNothing().given(reportService).create(eq(20L), eq(1L), any(), any());
+
+            // when & then - 이미지 없이 request 파트만 전송
+            mockMvc.perform(multipart("/api/report/missing/1")
+                            .file(requestPart(request))
+                            .header("X-User-Id", 20L))
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("이미지 첨부 제보 등록")
+        void create_withImage() throws Exception {
+            // given
+            ReportDTO.Request request = new ReportDTO.Request(
+                    "여기서 봤어요", "공원에서 봤습니다", "서울시 강남구", null
+            );
+            MockMultipartFile image = new MockMultipartFile(
+                    "image", "pet.jpg", MediaType.IMAGE_JPEG_VALUE, "fake-image-bytes".getBytes()
+            );
+            willDoNothing().given(reportService).create(eq(20L), eq(1L), any(), any());
 
             // when & then
-            mockMvc.perform(post("/api/report/missing/1")
-                            .header("X-User-Id", 20L)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
+            mockMvc.perform(multipart("/api/report/missing/1")
+                            .file(requestPart(request))
+                            .file(image)
+                            .header("X-User-Id", 20L))
                     .andExpect(status().isOk());
         }
 
@@ -114,14 +142,13 @@ class ReportControllerTest {
         void create_anonymous() throws Exception {
             // given
             ReportDTO.Request request = new ReportDTO.Request(
-                    "제보합니다", "내용", null, "장소", null
+                    "제보합니다", "내용", "장소", null
             );
-            willDoNothing().given(reportService).create(isNull(), eq(1L), any());
+            willDoNothing().given(reportService).create(isNull(), eq(1L), any(), any());
 
             // when & then
-            mockMvc.perform(post("/api/report/missing/1")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
+            mockMvc.perform(multipart("/api/report/missing/1")
+                            .file(requestPart(request)))
                     .andExpect(status().isOk());
         }
 
@@ -130,16 +157,15 @@ class ReportControllerTest {
         void create_missingNotFound() throws Exception {
             // given
             ReportDTO.Request request = new ReportDTO.Request(
-                    "제보", "내용", null, "장소", null
+                    "제보", "내용", "장소", null
             );
             willThrow(new IllegalArgumentException("실종 신고를 찾을 수 없습니다. id: 999"))
-                    .given(reportService).create(eq(20L), eq(999L), any());
+                    .given(reportService).create(eq(20L), eq(999L), any(), any());
 
             // when & then
-            mockMvc.perform(post("/api/report/missing/999")
-                            .header("X-User-Id", 20L)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
+            mockMvc.perform(multipart("/api/report/missing/999")
+                            .file(requestPart(request))
+                            .header("X-User-Id", 20L))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.message").value("실종 신고를 찾을 수 없습니다. id: 999"));
         }

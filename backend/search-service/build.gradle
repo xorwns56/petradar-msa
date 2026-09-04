@@ -1,0 +1,69 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.1'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.xorwns56'
+version = '0.0.1-SNAPSHOT'
+description = 'Search Service - Elasticsearch 기반 실종동물 검색'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+// Spring Cloud 버전 관리
+dependencyManagement {
+	imports {
+		mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2024.0.0'
+	}
+}
+
+dependencies {
+	// Web
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// Elasticsearch
+	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+
+	// Kafka - missing-created/deleted 이벤트 수신
+	implementation 'org.springframework.kafka:spring-kafka'
+
+	// Actuator + Prometheus + Zipkin
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'io.micrometer:micrometer-registry-prometheus'  // Prometheus 메트릭 포맷으로 노출
+	implementation 'io.micrometer:micrometer-tracing-bridge-brave'  // 분산 추적 브릿지
+	implementation 'io.zipkin.reporter2:zipkin-reporter-brave'      // Zipkin으로 트레이스 전송
+
+	// SpringDoc - Swagger UI + OpenAPI 3.0
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
+
+	// Lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// Test
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+// 로컬 개발 시 JVM 메모리 제한
+tasks.named('bootRun') {
+	jvmArgs = ['-Xmx256m']
+}

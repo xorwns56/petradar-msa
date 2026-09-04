@@ -1,12 +1,11 @@
-package com.xorwns56.report.kafka;
+package com.xorwns56.search.kafka;
 
-// 실종 신고 등록 이벤트
-// search-service: Elasticsearch 인덱싱
-// report-service(MissingCreatedConsumer): 전체 유저 알림 발송
+// 실종 신고 등록 이벤트 (report-service에서 발행)
+// Elasticsearch에 인덱싱할 데이터 수신
 public record MissingCreatedEvent(
         Long missingId,
         Long userId,
-        String imageUrl,     // MinIO URL (없으면 null)
+        String imageUrl,
         String petName,
         String petType,
         String petGender,

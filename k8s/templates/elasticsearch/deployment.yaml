@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "petradar.labels" . | nindent 4 }}
+    app: elasticsearch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elasticsearch
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    spec:
+      containers:
+        - name: elasticsearch
+          image: {{ .Values.elasticsearch.image }}
+          ports:
+            - containerPort: {{ .Values.elasticsearch.port }}
+          env:
+            # 단일 노드 모드 (k8s에서도 단일 인스턴스)
+            - name: discovery.type
+              value: "single-node"
+            # 보안 비활성화 (내부 클러스터 통신만 허용)
+            - name: xpack.security.enabled
+              value: "false"
+            # JVM 메모리 설정
+            - name: ES_JAVA_OPTS
+              value: "-Xms256m -Xmx256m"
+          resources:
+            {{- toYaml .Values.elasticsearch.resources | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /_cluster/health
+              port: {{ .Values.elasticsearch.port }}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /_cluster/health
+              port: {{ .Values.elasticsearch.port }}
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          volumeMounts:
+            - name: elasticsearch-data
+              mountPath: /usr/share/elasticsearch/data
+      volumes:
+        - name: elasticsearch-data
+          emptyDir: {}

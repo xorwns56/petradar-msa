@@ -18,7 +18,7 @@ global:
 # =============================================================================
 
 postgres:
-  image: pgvector/pgvector:pg16  # pgvector 확장 포함 이미지
+  image: postgres:16-alpine
   port: 5432
   username: postgres
   password: "1234"
@@ -119,12 +119,19 @@ reportService:
     requests: { cpu: 200m, memory: 256Mi }
     limits:   { cpu: 500m, memory: 512Mi }
 
+elasticsearch:
+  image: elasticsearch:8.15.0
+  port: 9200
+  resources:
+    requests: { cpu: 200m, memory: 512Mi }
+    limits:   { cpu: 500m, memory: 1Gi }
+
 searchService:
   replicas: 1
-  port: 8000
+  port: 8080
   resources:
-    requests: { cpu: 300m, memory: 1Gi }   # CLIP 모델 로딩에 메모리 필요
-    limits:   { cpu: '1', memory: 2Gi }
+    requests: { cpu: 200m, memory: 256Mi }
+    limits:   { cpu: 500m, memory: 512Mi }
 
 frontend:
   replicas: 1

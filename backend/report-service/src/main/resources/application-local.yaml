@@ -41,7 +41,7 @@ client:
   user-service:
     url: http://localhost:8081
   search-service:
-    url: http://localhost:8000
+    url: http://localhost:8083
 
 management:
   tracing:
