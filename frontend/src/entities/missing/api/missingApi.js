@@ -88,10 +88,3 @@ export const useDeleteMissing = () => {
   });
 };
 
-// 배치 조회 (AI 검색 결과에서 실제 데이터 조회)
-export const fetchMissingBatch = async (ids) => {
-  const response = await api.get("/api/missing/batch", {
-    params: { ids: ids.join(",") },
-  });
-  return response.data;
-};
