@@ -30,11 +30,3 @@ spring:
 # JWT 설정 (user-service와 동일한 시크릿 키 사용)
 jwt:
   secret: ${JWT_SECRET}
-
-management:
-  tracing:
-    sampling:
-      probability: 0.1  # 프로덕션에서는 10%만 추적
-  zipkin:
-    tracing:
-      endpoint: http://zipkin:9411/api/v2/spans

@@ -32,7 +32,7 @@ spring:
           predicates:
             - Path=/api/ws/**
 
-# 로그 파일 출력 설정 (Promtail이 수집)
+# 로그 파일 출력 설정
 logging:
   file:
     path: ./logs
@@ -45,14 +45,3 @@ logging:
 # JWT 설정 (user-service와 동일한 시크릿 키 사용)
 jwt:
   secret: petradar-secret-key-must-be-at-least-256-bits-long-for-hs256
-
-# -----------------------------------------
-# Zipkin 분산 추적 설정 (로컬)
-# -----------------------------------------
-management:
-  tracing:
-    sampling:
-      probability: 1.0  # 로컬에서는 모든 요청 추적 (프로덕션에서는 0.1 등으로 낮춤)
-  zipkin:
-    tracing:
-      endpoint: http://localhost:9411/api/v2/spans  # 로컬 Zipkin 서버 주소
