@@ -26,7 +26,8 @@ class MissingCreatedConsumerTest {
         MissingCreatedEvent event = new MissingCreatedEvent(
                 1L, 10L, "http://minio:9000/pet-images/test.jpg",
                 "멍멍이", "강아지", "수컷", "골든리트리버", "3살",
-                "서울시 강남구", "강아지를 찾습니다", "골든리트리버입니다"
+                "서울시 강남구", "강아지를 찾습니다", "골든리트리버입니다",
+                "2026-01-15"   // 실종일자 (검색 결과 카드 표시용)
         );
 
         // when
@@ -43,7 +44,8 @@ class MissingCreatedConsumerTest {
         MissingCreatedEvent event = new MissingCreatedEvent(
                 2L, 20L, null,
                 "야옹이", "고양이", null, null, null,
-                null, "고양이 찾습니다", null
+                null, "고양이 찾습니다", null,
+                null           // 실종일자도 없는 경우
         );
 
         // when

@@ -39,8 +39,8 @@ public class MissingController {
         return ResponseEntity.ok(missingService.getList("", "latest"));
     }
 
-    // ID 목록으로 실종 신고 조회 (search-service 유사도 검색 결과 연동용)
-    @Operation(summary = "ID 목록으로 실종 신고 조회", description = "search-service 유사도 검색 결과 연동용")
+    // ID 목록으로 실종 신고 조회
+    @Operation(summary = "ID 목록으로 실종 신고 조회", description = "ID 리스트로 배치 조회")
     @GetMapping("/batch")
     public ResponseEntity<List<MissingDTO.Response>> getByIds(
             @RequestParam List<Long> ids) {

@@ -52,10 +52,10 @@ public class MissingService {
                 .map(MissingDTO.Response::from);
     }
 
-    // ID 목록으로 실종 신고 조회 (search-service 연동용, ID 순서 유지)
+    // ID 목록으로 실종 신고 조회 (ID 순서 유지)
     @Transactional(readOnly = true)
     public List<MissingDTO.Response> getByIds(List<Long> ids) {
-        // DB 조회 후 요청된 ID 순서대로 정렬 (유사도 순서 보존)
+        // DB 조회 후 요청된 ID 순서대로 정렬
         List<Missing> results = missingRepository.findByIdIn(ids);
         return ids.stream()
                 .flatMap(id -> results.stream().filter(m -> m.getId().equals(id)))
@@ -109,7 +109,7 @@ public class MissingService {
         log.info("실종 신고 등록 완료: missingId={}, userId={}, petName={}", missing.getId(), userId, request.getPetName());
 
         // 3. Kafka로 missing-created 이벤트 발행
-        // search-service: CLIP 벡터화 후 pgvector 저장
+        // search-service: Elasticsearch 인덱싱
         // report-service(MissingCreatedConsumer): 전체 유저 알림 발송
         // Kafka가 메시지 보관 → 각 consumer 장애 시에도 eventually 처리 보장
         kafkaTemplate.send(KAFKA_TOPIC_MISSING_CREATED,
@@ -124,7 +124,8 @@ public class MissingService {
                         missing.getPetAge(),
                         missing.getPetMissingPlace(),
                         missing.getTitle(),
-                        missing.getContent()
+                        missing.getContent(),
+                        missing.getPetMissingDate()
                 ));
     }
 
@@ -169,7 +170,7 @@ public class MissingService {
 
         missingRepository.delete(missing);
 
-        // search-service에서 pgvector 임베딩 삭제
+        // search-service에서 Elasticsearch 인덱스 삭제
         kafkaTemplate.send(KAFKA_TOPIC_MISSING_DELETED, new MissingDeletedEvent(id));
         log.info("실종 신고 삭제 완료: missingId={}, userId={}", id, userId);
     }
